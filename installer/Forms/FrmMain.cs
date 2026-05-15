@@ -119,7 +119,7 @@ namespace Installer.Forms
             {
                 frm.OnSuccess += () =>
                 {
-                    if (Settings.Default.AutoRestartPatch)
+                    if (Settings.Default.AutoRestartPatch && action == FrmPatch.PatchAction.Install)
                     {
                         this.BeginInvoke(new Action(() => DiscordManager.Launch()));
                     }
