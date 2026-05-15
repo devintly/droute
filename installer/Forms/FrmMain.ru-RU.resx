@@ -117,12 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="tabPage1.Text" xml:space="preserve">
-    <value>Главные</value>
-  </data>
-  <data name="tabPage2.Text" xml:space="preserve">
-    <value>О программе</value>
-  </data>
   <data name="openLogsButton.Text" xml:space="preserve">
     <value>Открыть droute.log</value>
   </data>
@@ -132,24 +126,18 @@
   <data name="installPatchButton.Text" xml:space="preserve">
     <value>Установить</value>
   </data>
-  <data name="groupBox2.Text" xml:space="preserve">
-    <value>Действия с Discord</value>
-  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="autoRestartPatchCheckbox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>276, 17</value>
+    <value>301, 17</value>
   </data>
   <data name="autoRestartPatchCheckbox.Text" xml:space="preserve">
-    <value>Перезапустить Discord при установке / удалении</value>
+    <value>Автоматически перезапускать или закрывать Discord</value>
   </data>
   <data name="autoRestartConfigCheckbox.Size" type="System.Drawing.Size, System.Drawing">
     <value>297, 17</value>
   </data>
   <data name="autoRestartConfigCheckbox.Text" xml:space="preserve">
     <value>Перезапустить Discord при изменении конфигурации</value>
-  </data>
-  <data name="groupBox1.Text" xml:space="preserve">
-    <value>Конфигурация прокси</value>
   </data>
   <data name="applyCfgButton.Text" xml:space="preserve">
     <value>Применить изменения</value>
@@ -183,6 +171,12 @@
   </data>
   <data name="authCheckBox.Text" xml:space="preserve">
     <value>Авторизация</value>
+  </data>
+  <data name="groupBox1.Text" xml:space="preserve">
+    <value>Конфигурация прокси</value>
+  </data>
+  <data name="tabPage1.Text" xml:space="preserve">
+    <value>Главные</value>
   </data>
   <data name="licenseLink.Location" type="System.Drawing.Point, System.Drawing">
     <value>188, 163</value>
@@ -304,6 +298,9 @@
         LSnb9BuJ0KPeSIOBmGrGewXo1q/bY3v5Min0IPJGhZwNKKAFXHI0b6Nifv39z19osvhTv789fwgv04Bk
         6dG8jSuFzoWh1yTJnCQ6K4bWdwfp82N69S1EqdeJY/F/I7Q8o90b8BQAAAAASUVORK5CYII=
 </value>
+  </data>
+  <data name="tabPage2.Text" xml:space="preserve">
+    <value>О программе</value>
   </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -2016,6 +2013,10 @@
         ///////8////4AAAAAB///////////////z////gAAAAB////////////////P////AAAAf/////////
         ///////8
 </value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="$this.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>Droute: Прокси для Discord</value>
