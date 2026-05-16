@@ -43,6 +43,14 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(SolutionDir)dist\$(Platform)\$(Configuration)\</OutDir>
+    <TargetName>$(ProjectName)_64</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)dist\$(Platform)\$(Configuration)\</OutDir>
+    <TargetName>$(ProjectName)_64</TargetName>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -61,7 +69,11 @@
       <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy /Y "$(OutDir)$(TargetName).dll" "$(SolutionDir)installer\Resources\"</Command>
+      <Command>if not exist "$(SolutionDir)installer\Resources\" mkdir "$(SolutionDir)installer\Resources\"
+copy /Y "$(OutDir)$(TargetName).dll" "$(SolutionDir)installer\Resources\"
+
+if not exist "$(SolutionDir)updaterHook\Resources\" mkdir "$(SolutionDir)updaterHook\Resources\"
+copy /Y "$(OutDir)$(TargetName).dll" "$(SolutionDir)updaterHook\Resources\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -84,7 +96,11 @@
       <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy /Y "$(OutDir)$(TargetName).dll" "$(SolutionDir)installer\Resources\"</Command>
+      <Command>if not exist "$(SolutionDir)installer\Resources\" mkdir "$(SolutionDir)installer\Resources\"
+copy /Y "$(OutDir)$(TargetName).dll" "$(SolutionDir)installer\Resources\"
+
+if not exist "$(SolutionDir)updaterHook\Resources\" mkdir "$(SolutionDir)updaterHook\Resources\"
+copy /Y "$(OutDir)$(TargetName).dll" "$(SolutionDir)updaterHook\Resources\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
