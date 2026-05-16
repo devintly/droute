@@ -2,9 +2,9 @@
 using System.IO;
 using System.Runtime.CompilerServices;
 
-namespace Droute.UpdaterHook
+namespace Droute.Core
 {
-    internal static class Logger
+    public static class Logger
     {
         private static readonly string _logPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), 
             "Temp", "droute.log");
