@@ -1,4 +1,4 @@
-﻿namespace Installer.Forms
+﻿namespace Droute.Installer.Forms
 {
     partial class FrmMain
     {

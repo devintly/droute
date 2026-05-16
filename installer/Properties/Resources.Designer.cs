@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Installer.Properties {
+namespace Droute.Installer.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Installer.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Installer.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Droute.Installer.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -63,9 +63,9 @@ namespace Installer.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Byte[].
         /// </summary>
-        internal static byte[] DrouteDLL {
+        internal static byte[] Droute64 {
             get {
-                object obj = ResourceManager.GetObject("DrouteDLL", resourceCulture);
+                object obj = ResourceManager.GetObject("Droute64", resourceCulture);
                 return ((byte[])(obj));
             }
         }

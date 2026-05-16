@@ -3,7 +3,7 @@ using System;
 using System.Diagnostics;
 using System.Reflection;
 
-namespace Installer.Classes
+namespace Droute.Installer.Classes
 {
     internal class Config
     {

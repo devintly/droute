@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Installer.Classes
+namespace Droute.Installer.Classes
 {
     public static class DiscordManager
     {

@@ -1,8 +1,8 @@
-﻿using Installer.Forms;
+﻿using Droute.Installer.Forms;
 using System;
 using System.Windows.Forms;
 
-namespace Installer
+namespace Droute.Installer
 {
     internal static class Program
     {

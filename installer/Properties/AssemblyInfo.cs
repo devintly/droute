@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 // Общие сведения об этой сборке предоставляются следующим набором
 // набора атрибутов. Измените значения этих атрибутов для изменения сведений,
 // связанных со сборкой.
-[assembly: AssemblyTitle("Droute")]
+[assembly: AssemblyTitle("Droute Installer")]
 [assembly: AssemblyDescription("Discord Proxy Setup")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("snowluwu")]

@@ -2,7 +2,7 @@
 using System;
 using System.IO;
 
-namespace Installer.Classes
+namespace Droute.Installer.Classes
 {
     internal class PatchManager
     {
@@ -86,7 +86,7 @@ namespace Installer.Classes
         private static void PreparePayloadDll(string targetFolder)
         {
             string destination = Path.Combine(targetFolder, PAYLOAD_DLL);
-            File.WriteAllBytes(destination, Properties.Resources.DrouteDLL);
+            File.WriteAllBytes(destination, Properties.Resources.Droute64);
         }
 
         private static void ApplyPePatch(string filePath)

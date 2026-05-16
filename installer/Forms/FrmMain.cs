@@ -1,11 +1,11 @@
-﻿using Installer.Classes;
-using Installer.Properties;
+﻿using Droute.Installer.Classes;
+using Droute.Installer.Properties;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 
-namespace Installer.Forms
+namespace Droute.Installer.Forms
 {
     public partial class FrmMain : Form
     {

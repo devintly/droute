@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Installer.Classes;
+using Droute.Installer.Classes;
 
-namespace Installer.Forms
+namespace Droute.Installer.Forms
 {
     public partial class FrmPatch : Form
     {
