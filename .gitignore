@@ -428,4 +428,6 @@ FodyWeavers.xsd
 *.msm
 *.msp
 
-droute.dll
+# Post-Build Resources
+installer/Resources/droute_*.dll
+updaterHook/Resources/droute_*.dll
