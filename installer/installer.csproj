@@ -6,7 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{DB4992B0-6C03-432E-A25A-77A8C4C424F8}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>Installer</RootNamespace>
+    <RootNamespace>Droute.Installer</RootNamespace>
     <AssemblyName>droute</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -106,10 +106,15 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\droute.dll" />
+    <Content Include="Other\vectors.ico" />
+    <Content Include="Resources\droute_64.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Other\vectors.ico" />
+    <ProjectReference Include="..\core\core.csproj">
+      <Project>{3b9a078a-7068-4dfb-b44a-0c32faf7f931}</Project>
+      <Name>core</Name>
+    </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
