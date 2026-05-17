@@ -1,52 +1,46 @@
-<div align="center">
-<img src="/external/vectors.png" width="105" height="104">
-<h1>Droute</h1>
-</div>
+# Discord Droute (Native Proxy for Discord)
 
-**Droute** - это небольшая утилита, которая нативно интегрирует прокси в Discord.
+**Droute** is a tool for integrating a SOCKS5 proxy into the Discord client for Windows. It resolves the lack of built-in proxy settings in Discord and eliminates the need to configure TUN interfaces or a VPN.
 
-Весь трафик приложения перенаправляется на SOCKS прокси.
+The project is inspired by the [force-proxy](https://github.com/runetfreedom/force-proxy) concept and uses the [MinHook](https://github.com/tsudakageyu/minhook) hooking library.
 
-[🍔 English version](/README.en.md)
+---
 
-## 🤔 Зачем это нужно?
-- **⚡ Автономность:** Discord превращается в самодостаточный прокси-клиент. Он игнорирует системные настройки VPN и прокси - если вы отключите основной VPN, Discord продолжит работать через заданный прокси.
-- **🤏 Zero-Config маршрутизация:** Вам больше не нужно возиться с TUN-интерфейсами или прописывать сложные правила фильтрации по процессам. Патч работает внутри процесса, исключая ошибки маршрутизации.
-- **🕊️ Чистый сетевой стек:** Метод нативных хуков не создает виртуальных сетевых карт и не забивает таблицу маршрутизации Windows. Это исключает конфликты с античитами, корпоративными VPN или другими сетевыми фильтрами.
+## Features
 
-## 🚀 Как пользоваться:
-1. Скачайте последнюю версию во вкладке **[Releases.](https://github.com/snowluwu/droute/releases)**
-2. **Запустите Droute.**
-3. Измените конфигурацию прокси под себя, после **сохраните изменения.**
-4. Нажмите на кнопку **Install**.
-   - *Программа автоматически найдет Discord и выполнит установку в его директорию.*
-5. Если захотите удалить патч - нажмите на кнопку **Remove**.
+- **Full Proxying:** Forces all Discord traffic through a specified server, ignoring system proxies, TUN interfaces, and VPNs.
+- **Voice Chat and Stream Support:** Proxies both TCP (chat, media) and UDP traffic, ensuring the functionality of voice channels and streams.
+- **Process-Level Isolation:** Operates locally within Discord's memory without creating services or altering Windows network settings.
+- **Update Resilience:** The patch automatically migrates whenever Discord updates.
+- **Multi-Client Support:** Fully compatible with Stable, Canary, and PTB builds.
 
-## 🔧 Техническая часть
-Проект написан с нуля на C++ и C#, вдохновлен реализацией [force-proxy.](https://github.com/runetfreedom/force-proxy)
-- **Интеграция:** Используется библиотека [MinHook](https://github.com/tsudakageyu/minhook) для перехвата сетевых вызовов Windows API (winsock2.h)
-- **Патч:** Проект использует метод **Proxy DLL Side-loading**, что позволяет внедрить код в адресное пространство процесса без изменение файлов Discord'а.
+---
 
-**Процесс патчинга:**
-1. **Proxying:** Оригинальная системная библиотека `version.dll` копируется в директорию с Discord.
-2. **Deployment:** Рядом размещается модуль `droute.dll`, содержащий основную логику перехвата трафика.
-3. **PE-Patching (Import Table):** В локальной копии `version.dll` модифицируется таблица импортов (IAT) - в неё добавляется рекурсивная зависимость от `droute.dll`.
-4. **Execution:** При старте приложения загрузчик Windows (LDR) находит локальную `version.dll`, которая автоматически подтягивает `droute.dll` в память процесса.
+## Installation
 
-Этот подход позволяет безопасно интегрировать функции проксирования, не используя агрессивный патчинг.
+1. Download the latest version from the [releases page](https://github.com/snowluwu/droute/releases/latest).
+2. Run `droute.exe`, enter your SOCKS5 proxy details, and select your Discord build.
+3. Click the apply button to install the patch.
 
-## 👨‍💻 Разработка
-Если вы хотите собрать проект сами:
-1. Склонируйте репозиторий: `git clone --recursive https://github.com/snowluwu/droute.git`
-2. Откройте решение в **Visual Studio 2022**
-3. Соберите в режиме **Release / Debug**
+---
 
-## 🐛 Баги и предложения
-Если у вас что-то не работает или есть идеи, как сделать **Droute** лучше - не стесняйтесь открывать [Issue!](https://github.com/snowluwu/droute/issues)
+## Architecture and Technical Details
 
-**Перед созданием тикета, пожалуйста:**
-1. Убедитесь, что вы используйте последнюю версию патча.
-2. Проверьте, не открыта ли уже похожая тема другими пользователями.
-3. Расскажите все в подробностях и прикрепите `droute.log` который находится в `%Temp%`
+### Non-Invasive Integration
+Droute does not modify Discord's executable code. Memory injection is achieved using *DLL Hijacking* and .NET configuration files.
 
-**Ваш фидбек помогает сделать проект лучше для всех! 🤝**
+### Traffic Interception Mechanism
+The libraries `version.dll` and `droute.dll` are placed into the Discord directory.
+- Upon startup, Discord loads the local `version.dll` instead of the system one.
+- The local `version.dll` forwards legitimate calls to the original system library while simultaneously loading `droute.dll`.
+- Using **MinHook**, `droute.dll` intercepts Discord's low-level network calls and routes them to the proxy.
+
+### Update Persistence Mechanism
+When Discord updates, it moves to a directory with a new version number. Droute intercepts this process:
+- A `.config` file for the .NET application is added to the folder containing `Update.exe` (Squirrel Updater).
+- When `Update.exe` runs, it automatically loads the `Droute.UpdaterHook.dll` library.
+- This library hooks the process creation function. As soon as Squirrel Updater downloads an update and launches the new Discord version, the hook copies the patch files into the new application directory before it starts.
+
+### Configuration and Logging
+- **Settings Storage:** All configurations are written to the Windows Registry at `HKCU/Software/droute` and can be edited via `regedit`.
+- **Diagnostics:** Main module logs are stored in `%Temp%\droute.log`, while update module logs are located in `droute.log` within the Discord root directory.
