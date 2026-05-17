@@ -11,6 +11,7 @@ namespace Droute.Installer.Forms
     public partial class FrmMain : Form
     {
         private Config _cfg = null;
+        private DiscordManager.Branches _selectedBranch = DiscordManager.Branches.Stable;
 
         public FrmMain()
         {
@@ -63,6 +64,8 @@ namespace Droute.Installer.Forms
                 branchesComboBox.Items.Add(branch);
 
             branchesComboBox.Text = availableBranches[0].ToString();
+
+            _selectedBranch = (DiscordManager.Branches)branchesComboBox.SelectedIndex;
         }
 
         private void applyCfgButton_Click(object sender, EventArgs e)
@@ -70,8 +73,8 @@ namespace Droute.Installer.Forms
             ApplyConfig();
             if (Settings.Default.AutoRestartConfig)
             {
-                DiscordManager.Close(DiscordManager.Branches.Stable); 
-                DiscordManager.Launch(DiscordManager.Branches.Stable);
+                DiscordManager.Close(_selectedBranch); 
+                DiscordManager.Launch(_selectedBranch);
             }
         }
 
@@ -131,16 +134,19 @@ namespace Droute.Installer.Forms
 
         private void HandlePatchAction(FrmPatch.PatchAction action)
         {
+            _selectedBranch = 
+                (DiscordManager.Branches)branchesComboBox.SelectedIndex;
+            
             if (Settings.Default.AutoRestartPatch)
-                DiscordManager.Close(DiscordManager.Branches.Stable);
+                DiscordManager.Close(_selectedBranch);
 
-            using (var frm = new FrmPatch(action, (DiscordManager.Branches)branchesComboBox.SelectedIndex))
+            using (var frm = new FrmPatch(action, _selectedBranch))
             {
                 frm.OnSuccess += () =>
                 {
                     if (Settings.Default.AutoRestartPatch && action == FrmPatch.PatchAction.Install)
                     {
-                        this.BeginInvoke(new Action(() => DiscordManager.Launch(DiscordManager.Branches.Stable)));
+                        this.BeginInvoke(new Action(() => DiscordManager.Launch(_selectedBranch)));
                     }
                 };
 
