@@ -19,30 +19,28 @@ namespace Droute.Core
             }
         }
 
-        public static void Trace(string message, [CallerFilePath] string filePath = "")
-            => Log("TRACE", message, filePath);
+        public static void Trace(string message)
+            => Log("TRACE", message);
 
-        public static void Debug(string message, [CallerFilePath] string filePath = "")
-            => Log("DEBUG", message, filePath);
+        public static void Debug(string message)
+            => Log("DEBUG", message);
 
-        public static void Info(string message, [CallerFilePath] string filePath = "")
-            => Log("INFO", message, filePath);
+        public static void Info(string message)
+            => Log("INFO", message);
 
-        public static void Warning(string message, [CallerFilePath] string filePath = "")
-            => Log("WARN", message, filePath);
+        public static void Warning(string message)
+            => Log("WARN", message);
 
-        public static void Error(string message, [CallerFilePath] string filePath = "")
-            => Log("ERROR", message, filePath);
+        public static void Error(string message)
+            => Log("ERROR", message);
 
-        private static void Log(string level, string message, string filePath)
+        private static void Log(string level, string message)
         {
             try
             {
                 string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
 
-                string fileName = !string.IsNullOrEmpty(filePath) ? Path.GetFileName(filePath) : "unknown";
-
-                string logLine = $"[{timestamp}] [{level}] [{fileName}] {message}{Environment.NewLine}";
+                string logLine = $"[{timestamp}] [{level}] {message}{Environment.NewLine}";
 
                 lock (_lock) File.AppendAllText(_logPath, logLine);
             }

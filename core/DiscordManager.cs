@@ -126,8 +126,8 @@ namespace Droute.Core
 
         public static void Launch(Branches branch)
         {
-            string branchPath = GetBranchRoot(branch);
-            string executablePath = GetDiscordExecutablePath(branchPath, branch);
+            string branchRoot = GetBranchRoot(branch);
+            string executablePath = GetDiscordExecutablePath(branchRoot, branch);
 
             if (!File.Exists(executablePath))
                 throw new FileNotFoundException("Discord executable not found!", executablePath);
