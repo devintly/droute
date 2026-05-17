@@ -22,18 +22,14 @@ jobs:
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
 
-      - name: Setup NuGet
-        uses: nuget/setup-nuget@v2
-        with:
-          nuget-version: 'latest'
-
       - name: Restore NuGet packages
-        run: nuget restore droute.sln
+        run: msbuild droute.sln /t:Restore /p:Configuration=Release /p:Platform=x64
 
-      - name: Ensure Resources directory exists
+      - name: Ensure Resources directories exist
         shell: pwsh
         run: |
-          New-Item -ItemType Directory -Force -Path "installer\Resources" | Out-Null
+          New-Item -ItemType Directory -Force -Path installer\Resources | Out-Null
+          New-Item -ItemType Directory -Force -Path updaterHook\Resources | Out-Null
 
       - name: Build solution
         run: msbuild droute.sln /p:Configuration=Release /p:Platform=x64 /p:RestorePackages=false /verbosity:minimal
@@ -41,17 +37,36 @@ jobs:
       - name: Verify build outputs
         shell: pwsh
         run: |
+          $errors = @()
+
           $exe = "installer\bin\Release\droute.exe"
-          $dll = "installer\Resources\droute.dll"
           if (!(Test-Path $exe)) {
-            Write-Error "droute.exe not found at $exe"
+            $errors += "droute.exe not found"
+          } else {
+            Write-Output "droute.exe: $((Get-Item $exe).Length) bytes"
+          }
+
+          $native = "installer\Resources\droute_64.dll"
+          if (!(Test-Path $native)) {
+            $errors += "droute_64.dll not found in installer\Resources"
+          } else {
+            Write-Output "droute_64.dll: $((Get-Item $native).Length) bytes"
+          }
+
+          $hook = Get-Item "installer\Resources\Droute.UpdaterHook.dll" -ErrorAction SilentlyContinue
+          if (!$hook) {
+            $errors += "Droute.UpdaterHook.dll not found in installer\Resources"
+          } elseif ($hook.Length -lt 1MB) {
+            $errors += "Droute.UpdaterHook.dll too small (<1MB) — likely not merged"
+          } else {
+            Write-Output "Droute.UpdaterHook.dll: $($hook.Length) bytes"
+          }
+
+          if ($errors.Count -gt 0) {
+            foreach ($e in $errors) { Write-Error $e }
             exit 1
           }
-          if (!(Test-Path $dll)) {
-            Write-Error "droute.dll was not copied to installer\Resources"
-            exit 1
-          }
-          Write-Output "Build outputs verified successfully."
+          Write-Output "All build outputs verified."
 
       - name: Prepare release archive
         shell: pwsh
@@ -59,6 +74,7 @@ jobs:
           $outDir = "release"
           New-Item -ItemType Directory -Force -Path $outDir | Out-Null
           Copy-Item "installer\bin\Release\droute.exe" -Destination $outDir
+          Copy-Item "installer\bin\Release\droute.exe.config" -Destination $outDir -ErrorAction SilentlyContinue
           Get-ChildItem -Path "installer\bin\Release" -Directory | ForEach-Object {
             Copy-Item $_.FullName -Destination "$outDir\$($_.Name)" -Recurse -Force
           }
