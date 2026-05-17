@@ -1,11 +1,12 @@
-﻿using Installer.Classes;
-using Installer.Properties;
+﻿using Droute.Core;
+using Droute.Installer.Classes;
+using Droute.Installer.Properties;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 
-namespace Installer.Forms
+namespace Droute.Installer.Forms
 {
     public partial class FrmMain : Form
     {
@@ -51,8 +52,8 @@ namespace Installer.Forms
             ApplyConfig();
             if (Settings.Default.AutoRestartConfig)
             {
-                DiscordManager.Close(); 
-                DiscordManager.Launch();
+                DiscordManager.Close(DiscordManager.Branches.Stable); 
+                DiscordManager.Launch(DiscordManager.Branches.Stable);
             }
         }
 
@@ -113,7 +114,7 @@ namespace Installer.Forms
         private void HandlePatchAction(FrmPatch.PatchAction action)
         {
             if (Settings.Default.AutoRestartPatch)
-                DiscordManager.Close();
+                DiscordManager.Close(DiscordManager.Branches.Stable);
 
             using (var frm = new FrmPatch(action))
             {
@@ -121,7 +122,7 @@ namespace Installer.Forms
                 {
                     if (Settings.Default.AutoRestartPatch && action == FrmPatch.PatchAction.Install)
                     {
-                        this.BeginInvoke(new Action(() => DiscordManager.Launch()));
+                        this.BeginInvoke(new Action(() => DiscordManager.Launch(DiscordManager.Branches.Stable)));
                     }
                 };
 

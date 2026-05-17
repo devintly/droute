@@ -1,4 +1,4 @@
-﻿namespace Installer.Forms
+﻿namespace Droute.Installer.Forms
 {
     partial class FrmPatch
     {
@@ -35,25 +35,30 @@
             // 
             // journalListBox
             // 
+            this.journalListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.journalListBox.FormattingEnabled = true;
             this.journalListBox.Location = new System.Drawing.Point(12, 10);
             this.journalListBox.Name = "journalListBox";
             this.journalListBox.ScrollAlwaysVisible = true;
-            this.journalListBox.Size = new System.Drawing.Size(334, 134);
+            this.journalListBox.Size = new System.Drawing.Size(388, 186);
             this.journalListBox.TabIndex = 1;
             // 
             // progressBar
             // 
-            this.progressBar.Location = new System.Drawing.Point(12, 149);
+            this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.progressBar.Location = new System.Drawing.Point(12, 204);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(334, 24);
+            this.progressBar.Size = new System.Drawing.Size(388, 24);
             this.progressBar.TabIndex = 2;
             // 
             // FrmPatch
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(358, 181);
+            this.ClientSize = new System.Drawing.Size(412, 236);
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.journalListBox);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;

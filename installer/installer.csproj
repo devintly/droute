@@ -6,7 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{DB4992B0-6C03-432E-A25A-77A8C4C424F8}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>Installer</RootNamespace>
+    <RootNamespace>Droute.Installer</RootNamespace>
     <AssemblyName>droute</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -50,16 +50,14 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <PackageReference Include="ILRepack.Lib.MSBuild.Task">
-      <Version>2.0.44.2</Version>
+      <Version>2.0.45</Version>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="PeNet" Version="4.0.0" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\Config.cs" />
-    <Compile Include="Classes\DiscordManager.cs" />
-    <Compile Include="Classes\PatchManager.cs" />
+    <Compile Include="Classes\PatchTools.cs" />
     <Compile Include="Forms\FrmMain.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -94,7 +92,7 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <None Include="app.config" />
-    <None Include="Other\ILRepack.targets" />
+    <None Include="ILRepack.targets" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -104,12 +102,19 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\droute.dll" />
+    <None Include="Resources\Update.exe.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Other\vectors.ico" />
+    <None Include="Resources\Droute.UpdaterHook.dll" />
+    <Content Include="Resources\droute_64.dll" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\core\core.csproj">
+      <Project>{3b9a078a-7068-4dfb-b44a-0c32faf7f931}</Project>
+      <Name>core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
