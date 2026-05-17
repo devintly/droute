@@ -11,6 +11,7 @@ namespace Droute.Installer.Forms
     public partial class FrmMain : Form
     {
         private Config _cfg = null;
+        private DiscordManager.Branches _selectedBranch = DiscordManager.Branches.Stable;
 
         public FrmMain()
         {
@@ -32,6 +33,7 @@ namespace Droute.Installer.Forms
 
         private void FrmMain_Load(object sender, EventArgs e)
         {
+            // -- Set values from Settings --
             hostTextBox.Text = _cfg.Host;
             portNumeric.Value = _cfg.Port;
             userTextBox.Text = _cfg.User;
@@ -43,8 +45,27 @@ namespace Droute.Installer.Forms
             autoRestartPatchCheckbox.Checked = Settings.Default.AutoRestartPatch;
             autoRestartConfigCheckbox.Checked = Settings.Default.AutoRestartConfig;
 
+            // -- Set Version in About tab --
             var versionInfo = new Version(Application.ProductVersion);
             versionLabel.Text = $"v. {versionInfo.Major}.{versionInfo.Minor}.{versionInfo.Build}";
+
+            // -- Set branches --
+            branchesComboBox.Items.Clear();
+
+            var availableBranches = DiscordManager.GetInstalledBranches();
+            if (availableBranches.Count == 0)
+            {
+                branchesComboBox.Items.Add("Stable");
+                branchesComboBox.Text = "Stable";
+                return;
+            }
+
+            foreach (var branch in availableBranches)
+                branchesComboBox.Items.Add(branch);
+
+            branchesComboBox.Text = availableBranches[0].ToString();
+
+            _selectedBranch = (DiscordManager.Branches)branchesComboBox.SelectedIndex;
         }
 
         private void applyCfgButton_Click(object sender, EventArgs e)
@@ -52,8 +73,8 @@ namespace Droute.Installer.Forms
             ApplyConfig();
             if (Settings.Default.AutoRestartConfig)
             {
-                DiscordManager.Close(DiscordManager.Branches.Stable); 
-                DiscordManager.Launch(DiscordManager.Branches.Stable);
+                DiscordManager.Close(_selectedBranch); 
+                DiscordManager.Launch(_selectedBranch);
             }
         }
 
@@ -113,16 +134,19 @@ namespace Droute.Installer.Forms
 
         private void HandlePatchAction(FrmPatch.PatchAction action)
         {
+            _selectedBranch = 
+                (DiscordManager.Branches)branchesComboBox.SelectedIndex;
+            
             if (Settings.Default.AutoRestartPatch)
-                DiscordManager.Close(DiscordManager.Branches.Stable);
+                DiscordManager.Close(_selectedBranch);
 
-            using (var frm = new FrmPatch(action))
+            using (var frm = new FrmPatch(action, _selectedBranch))
             {
                 frm.OnSuccess += () =>
                 {
                     if (Settings.Default.AutoRestartPatch && action == FrmPatch.PatchAction.Install)
                     {
-                        this.BeginInvoke(new Action(() => DiscordManager.Launch(DiscordManager.Branches.Stable)));
+                        this.BeginInvoke(new Action(() => DiscordManager.Launch(_selectedBranch)));
                     }
                 };
 

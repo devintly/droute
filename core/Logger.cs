@@ -1,22 +1,24 @@
 ﻿using System;
 using System.IO;
-using System.Runtime.CompilerServices;
 
 namespace Droute.Core
 {
     public static class Logger
     {
-        private static readonly string _logPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), 
-            "Temp", "droute.log");
+        private static readonly string _logPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "droute.log");
         private static readonly object _lock = new object();
 
         static Logger()
         {
-            lock (_lock)
+            try
             {
-                string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
-                File.AppendAllText(_logPath, $"// updaterHook session started at {timestamp}{Environment.NewLine}");
+                lock (_lock)
+                {
+                    string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
+                    File.AppendAllText(_logPath, $"// updaterHook session started at {timestamp}{Environment.NewLine}");
+                }
             }
+            catch { }
         }
 
         public static void Trace(string message)
@@ -39,9 +41,7 @@ namespace Droute.Core
             try
             {
                 string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
-
                 string logLine = $"[{timestamp}] [{level}] {message}{Environment.NewLine}";
-
                 lock (_lock) File.AppendAllText(_logPath, logLine);
             }
             catch { }

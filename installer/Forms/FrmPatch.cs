@@ -10,16 +10,20 @@ namespace Droute.Installer.Forms
     {
         public enum PatchAction { Install, Remove }
         public bool IsSuccessful { get; private set; }
+        public DiscordManager.Branches SelectedBranch { get; set; } = DiscordManager.Branches.Stable;
 
         public event Action OnSuccess;
 
         private bool _isWorking = false;
         private readonly PatchAction _action;
 
-        public FrmPatch(PatchAction action)
+        public FrmPatch(PatchAction action, DiscordManager.Branches branch)
         {
             InitializeComponent();
+
             _action = action;
+            this.SelectedBranch = branch;
+
             this.Text = _action == PatchAction.Install ? "Droute: Installing Patch..." : "Droute: Removing Patch...";
             this.ControlBox = true;
         }
@@ -42,7 +46,7 @@ namespace Droute.Installer.Forms
             {
                 IsSuccessful = await Task.Run(() =>
                 {
-                    return _action == PatchAction.Install ? PatchTools.Install(DiscordManager.Branches.Stable) : PatchTools.Remove(DiscordManager.Branches.Stable);
+                    return _action == PatchAction.Install ? PatchTools.Install(SelectedBranch) : PatchTools.Remove(SelectedBranch);
                 });
             }
             catch (Exception ex)

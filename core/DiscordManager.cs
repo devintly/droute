@@ -111,7 +111,7 @@ namespace Droute.Core
         public static void Close(Branches branch)
         {
             string processName = GetDiscordProcessName(branch);
-            var processes = System.Diagnostics.Process.GetProcessesByName(processName);
+            var processes = Process.GetProcessesByName(processName);
 
             foreach (var process in processes)
             {
