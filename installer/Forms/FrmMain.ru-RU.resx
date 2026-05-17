@@ -117,8 +117,14 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="tabPage1.Text" xml:space="preserve">
+    <value>Главные</value>
+  </data>
+  <data name="tabPage2.Text" xml:space="preserve">
+    <value>О программе</value>
+  </data>
   <data name="openLogsButton.Text" xml:space="preserve">
-    <value>Открыть droute.log</value>
+    <value>Открыть логи</value>
   </data>
   <data name="removePatchButton.Text" xml:space="preserve">
     <value>Удалить</value>
@@ -127,6 +133,15 @@
     <value>Установить</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="branchesComboBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>94, 66</value>
+  </data>
+  <data name="label6.Size" type="System.Drawing.Size, System.Drawing">
+    <value>87, 13</value>
+  </data>
+  <data name="label6.Text" xml:space="preserve">
+    <value>Текущая ветка:</value>
+  </data>
   <data name="autoRestartPatchCheckbox.Size" type="System.Drawing.Size, System.Drawing">
     <value>301, 17</value>
   </data>
@@ -139,6 +154,9 @@
   <data name="autoRestartConfigCheckbox.Text" xml:space="preserve">
     <value>Перезапустить Discord при изменении конфигурации</value>
   </data>
+  <data name="groupBox1.Text" xml:space="preserve">
+    <value>Конфигурация прокси</value>
+  </data>
   <data name="applyCfgButton.Text" xml:space="preserve">
     <value>Применить изменения</value>
   </data>
@@ -146,7 +164,7 @@
     <value>92, 29</value>
   </data>
   <data name="passwordTextBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>305, 20</value>
+    <value>302, 20</value>
   </data>
   <data name="label4.Size" type="System.Drawing.Size, System.Drawing">
     <value>48, 13</value>
@@ -158,7 +176,7 @@
     <value>92, 3</value>
   </data>
   <data name="userTextBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>305, 20</value>
+    <value>302, 20</value>
   </data>
   <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
     <value>86, 13</value>
@@ -171,12 +189,6 @@
   </data>
   <data name="authCheckBox.Text" xml:space="preserve">
     <value>Авторизация</value>
-  </data>
-  <data name="groupBox1.Text" xml:space="preserve">
-    <value>Конфигурация прокси</value>
-  </data>
-  <data name="tabPage1.Text" xml:space="preserve">
-    <value>Главные</value>
   </data>
   <data name="licenseLink.Location" type="System.Drawing.Point, System.Drawing">
     <value>188, 163</value>
@@ -298,9 +310,6 @@
         LSnb9BuJ0KPeSIOBmGrGewXo1q/bY3v5Min0IPJGhZwNKKAFXHI0b6Nifv39z19osvhTv789fwgv04Bk
         6dG8jSuFzoWh1yTJnCQ6K4bWdwfp82N69S1EqdeJY/F/I7Q8o90b8BQAAAAASUVORK5CYII=
 </value>
-  </data>
-  <data name="tabPage2.Text" xml:space="preserve">
-    <value>О программе</value>
   </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -2013,10 +2022,6 @@
         ///////8////4AAAAAB///////////////z////gAAAAB////////////////P////AAAAf/////////
         ///////8
 </value>
-  </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="$this.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>Droute: Прокси для Discord</value>
