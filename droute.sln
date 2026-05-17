@@ -10,6 +10,7 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "installer", "installer\installer.csproj", "{DB4992B0-6C03-432E-A25A-77A8C4C424F8}"
 	ProjectSection(ProjectDependencies) = postProject
 		{828C8590-E0A0-4682-A8B9-AF390FEC0340} = {828C8590-E0A0-4682-A8B9-AF390FEC0340}
+		{9CDE44E6-5189-447C-B8F0-2E8704409468} = {9CDE44E6-5189-447C-B8F0-2E8704409468}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "updaterHook", "updaterHook\updaterHook.csproj", "{9CDE44E6-5189-447C-B8F0-2E8704409468}"
