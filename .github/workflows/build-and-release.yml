@@ -31,6 +31,9 @@ jobs:
           New-Item -ItemType Directory -Force -Path installer\Resources | Out-Null
           New-Item -ItemType Directory -Force -Path updaterHook\Resources | Out-Null
 
+      - name: Install .NET Framework 4.5 reference assemblies
+        run: choco install netfx-4.5.2-devpack -y --no-progress
+
       - name: Build solution
         run: msbuild droute.sln /p:Configuration=Release /p:Platform=x64 /p:RestorePackages=false /verbosity:minimal
 
