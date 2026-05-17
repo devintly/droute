@@ -2,18 +2,22 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <Target Name="ILRepacker" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">
         
-        <ItemGroup>
-            <InputAssemblies Include="$(OutputPath)Droute.Core.dll" />
-        </ItemGroup>
+		<ItemGroup>
+			<InputAssemblies Include="$(OutputPath)$(TargetName)$(TargetExt)" />
+			<InputAssemblies Include="$(OutputPath)Droute.Core.dll" />
+			<InputAssemblies Include="$(OutputPath)AsmResolver.dll" />
+			<InputAssemblies Include="$(OutputPath)AsmResolver.PE.dll" />
+			<InputAssemblies Include="$(OutputPath)AsmResolver.PE.File.dll" />
+			<InputAssemblies Include="$(OutputPath)MonoMod.Backports.dll" />
+			<InputAssemblies Include="$(OutputPath)MonoMod.ILHelpers.dll" />
+		</ItemGroup>
 
         <ILRepack
             Parallel="true"
             Internalize="true"
             InputAssemblies="@(InputAssemblies)"
-            TargetKind="SameAsPrimary"
+            TargetKind="SameAsPrimaryAssembly"
             OutputFile="$(OutputPath)$(TargetName)$(TargetExt)"
-            MainAssembly="$(OutputPath)$(TargetName)$(TargetExt)"
-            WorkingDirectory="$(MSBuildProjectDirectory)\$(OutputPath)"
             LibraryPath="$(OutputPath)"
         />
 

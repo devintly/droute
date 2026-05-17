@@ -69,5 +69,30 @@ namespace Droute.Installer.Properties {
                 return ((byte[])(obj));
             }
         }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;configuration&gt;
+        ///    &lt;runtime&gt;
+        ///        &lt;appDomainManagerType value=&quot;Droute.UpdaterHook.Bootstrapper&quot; /&gt;
+        ///        &lt;appDomainManagerAssembly value=&quot;Droute.UpdaterHook, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null&quot; /&gt;
+        ///    &lt;/runtime&gt;
+        ///&lt;/configuration&gt;.
+        /// </summary>
+        internal static string UpdaterConfig {
+            get {
+                return ResourceManager.GetString("UpdaterConfig", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Byte[].
+        /// </summary>
+        internal static byte[] UpdaterHook {
+            get {
+                object obj = ResourceManager.GetObject("UpdaterHook", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }

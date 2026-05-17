@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Droute.Core;
 using Droute.Installer.Classes;
 
 namespace Droute.Installer.Forms
@@ -34,14 +35,14 @@ namespace Droute.Installer.Forms
             ClearJournal();
             UpdateProgress(0);
 
-            PatchManager.OnLog += WriteJournal;
-            PatchManager.OnProgressChanged += UpdateProgress;
+            PatchTools.OnLog += WriteJournal;
+            PatchTools.OnProgressChanged += UpdateProgress;
 
             try
             {
                 IsSuccessful = await Task.Run(() =>
                 {
-                    return _action == PatchAction.Install ? PatchManager.Install() : PatchManager.Remove();
+                    return _action == PatchAction.Install ? PatchTools.Install(DiscordManager.Branches.Stable) : PatchTools.Remove(DiscordManager.Branches.Stable);
                 });
             }
             catch (Exception ex)
@@ -50,8 +51,8 @@ namespace Droute.Installer.Forms
                 IsSuccessful = false;
             }
 
-            PatchManager.OnLog -= WriteJournal;
-            PatchManager.OnProgressChanged -= UpdateProgress;
+            PatchTools.OnLog -= WriteJournal;
+            PatchTools.OnProgressChanged -= UpdateProgress;
             _isWorking = false;
 
             if (IsSuccessful)
