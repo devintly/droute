@@ -35,6 +35,8 @@
             this.removePatchButton = new System.Windows.Forms.Button();
             this.installPatchButton = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.branchesComboBox = new System.Windows.Forms.ComboBox();
+            this.label6 = new System.Windows.Forms.Label();
             this.autoRestartPatchCheckbox = new System.Windows.Forms.CheckBox();
             this.autoRestartConfigCheckbox = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -73,20 +75,20 @@
             // 
             // tabControl
             // 
-            resources.ApplyResources(this.tabControl, "tabControl");
             this.tabControl.Controls.Add(this.tabPage1);
             this.tabControl.Controls.Add(this.tabPage2);
+            resources.ApplyResources(this.tabControl, "tabControl");
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
             // 
             // tabPage1
             // 
-            resources.ApplyResources(this.tabPage1, "tabPage1");
             this.tabPage1.Controls.Add(this.openLogsButton);
             this.tabPage1.Controls.Add(this.removePatchButton);
             this.tabPage1.Controls.Add(this.installPatchButton);
             this.tabPage1.Controls.Add(this.groupBox2);
             this.tabPage1.Controls.Add(this.groupBox1);
+            resources.ApplyResources(this.tabPage1, "tabPage1");
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
@@ -114,10 +116,27 @@
             // groupBox2
             // 
             resources.ApplyResources(this.groupBox2, "groupBox2");
+            this.groupBox2.Controls.Add(this.branchesComboBox);
+            this.groupBox2.Controls.Add(this.label6);
             this.groupBox2.Controls.Add(this.autoRestartPatchCheckbox);
             this.groupBox2.Controls.Add(this.autoRestartConfigCheckbox);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.TabStop = false;
+            // 
+            // branchesComboBox
+            // 
+            this.branchesComboBox.FormattingEnabled = true;
+            this.branchesComboBox.Items.AddRange(new object[] {
+            resources.GetString("branchesComboBox.Items"),
+            resources.GetString("branchesComboBox.Items1"),
+            resources.GetString("branchesComboBox.Items2")});
+            resources.ApplyResources(this.branchesComboBox, "branchesComboBox");
+            this.branchesComboBox.Name = "branchesComboBox";
+            // 
+            // label6
+            // 
+            resources.ApplyResources(this.label6, "label6");
+            this.label6.Name = "label6";
             // 
             // autoRestartPatchCheckbox
             // 
@@ -227,7 +246,6 @@
             // 
             // tabPage2
             // 
-            resources.ApplyResources(this.tabPage2, "tabPage2");
             this.tabPage2.Controls.Add(this.versionLabel);
             this.tabPage2.Controls.Add(this.licenseLink);
             this.tabPage2.Controls.Add(this.repoLink);
@@ -239,6 +257,7 @@
             this.tabPage2.Controls.Add(this.label7);
             this.tabPage2.Controls.Add(this.pictureBox1);
             this.tabPage2.Controls.Add(this.label5);
+            resources.ApplyResources(this.tabPage2, "tabPage2");
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
@@ -250,8 +269,8 @@
             // 
             // licenseLink
             // 
-            resources.ApplyResources(this.licenseLink, "licenseLink");
             this.licenseLink.ActiveLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(91)))), ((int)(((byte)(102)))), ((int)(((byte)(222)))));
+            resources.ApplyResources(this.licenseLink, "licenseLink");
             this.licenseLink.LinkColor = System.Drawing.Color.Black;
             this.licenseLink.Name = "licenseLink";
             this.licenseLink.TabStop = true;
@@ -260,8 +279,8 @@
             // 
             // repoLink
             // 
-            resources.ApplyResources(this.repoLink, "repoLink");
             this.repoLink.ActiveLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(91)))), ((int)(((byte)(102)))), ((int)(((byte)(222)))));
+            resources.ApplyResources(this.repoLink, "repoLink");
             this.repoLink.LinkColor = System.Drawing.Color.Black;
             this.repoLink.Name = "repoLink";
             this.repoLink.TabStop = true;
@@ -270,8 +289,8 @@
             // 
             // inspiredLink
             // 
-            resources.ApplyResources(this.inspiredLink, "inspiredLink");
             this.inspiredLink.ActiveLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(91)))), ((int)(((byte)(102)))), ((int)(((byte)(222)))));
+            resources.ApplyResources(this.inspiredLink, "inspiredLink");
             this.inspiredLink.LinkColor = System.Drawing.Color.Black;
             this.inspiredLink.Name = "inspiredLink";
             this.inspiredLink.TabStop = true;
@@ -379,5 +398,7 @@
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.LinkLabel inspiredLink;
         private System.Windows.Forms.Label versionLabel;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.ComboBox branchesComboBox;
     }
 }

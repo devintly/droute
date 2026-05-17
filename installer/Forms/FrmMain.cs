@@ -32,6 +32,7 @@ namespace Droute.Installer.Forms
 
         private void FrmMain_Load(object sender, EventArgs e)
         {
+            // -- Set values from Settings --
             hostTextBox.Text = _cfg.Host;
             portNumeric.Value = _cfg.Port;
             userTextBox.Text = _cfg.User;
@@ -43,8 +44,25 @@ namespace Droute.Installer.Forms
             autoRestartPatchCheckbox.Checked = Settings.Default.AutoRestartPatch;
             autoRestartConfigCheckbox.Checked = Settings.Default.AutoRestartConfig;
 
+            // -- Set Version in About tab --
             var versionInfo = new Version(Application.ProductVersion);
             versionLabel.Text = $"v. {versionInfo.Major}.{versionInfo.Minor}.{versionInfo.Build}";
+
+            // -- Set branches --
+            branchesComboBox.Items.Clear();
+
+            var availableBranches = DiscordManager.GetInstalledBranches();
+            if (availableBranches.Count == 0)
+            {
+                branchesComboBox.Items.Add("Stable");
+                branchesComboBox.Text = "Stable";
+                return;
+            }
+
+            foreach (var branch in availableBranches)
+                branchesComboBox.Items.Add(branch);
+
+            branchesComboBox.Text = availableBranches[0].ToString();
         }
 
         private void applyCfgButton_Click(object sender, EventArgs e)
@@ -116,7 +134,7 @@ namespace Droute.Installer.Forms
             if (Settings.Default.AutoRestartPatch)
                 DiscordManager.Close(DiscordManager.Branches.Stable);
 
-            using (var frm = new FrmPatch(action))
+            using (var frm = new FrmPatch(action, (DiscordManager.Branches)branchesComboBox.SelectedIndex))
             {
                 frm.OnSuccess += () =>
                 {
