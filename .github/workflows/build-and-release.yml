@@ -32,10 +32,11 @@ jobs:
           New-Item -ItemType Directory -Force -Path updaterHook\Resources | Out-Null
 
       - name: Install .NET Framework 4.5 reference assemblies
-        run: choco install netfx-4.5.2-devpack -y --no-progress
+        shell: pwsh
+        run: nuget install Microsoft.NETFramework.ReferenceAssemblies.net45 -Version 1.0.3 -OutputDir "$env:RUNNER_TEMP\refasm"
 
       - name: Build solution
-        run: msbuild droute.sln /p:Configuration=Release /p:Platform=x64 /p:RestorePackages=false /verbosity:minimal
+        run: msbuild droute.sln /p:Configuration=Release /p:Platform=x64 /p:RestorePackages=false /p:FrameworkPathOverride="$env:RUNNER_TEMP\refasm\Microsoft.NETFramework.ReferenceAssemblies.net45.1.0.3\build\.NETFramework\v4.5" /verbosity:minimal
 
       - name: Verify build outputs
         shell: pwsh
