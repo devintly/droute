@@ -29,40 +29,45 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmPatch));
-            this.journalListBox = new System.Windows.Forms.ListBox();
             this.progressBar = new System.Windows.Forms.ProgressBar();
+            this.journalRichBox = new System.Windows.Forms.RichTextBox();
             this.SuspendLayout();
-            // 
-            // journalListBox
-            // 
-            this.journalListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.journalListBox.FormattingEnabled = true;
-            this.journalListBox.Location = new System.Drawing.Point(12, 10);
-            this.journalListBox.Name = "journalListBox";
-            this.journalListBox.ScrollAlwaysVisible = true;
-            this.journalListBox.Size = new System.Drawing.Size(388, 186);
-            this.journalListBox.TabIndex = 1;
             // 
             // progressBar
             // 
             this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBar.Location = new System.Drawing.Point(12, 204);
+            this.progressBar.Location = new System.Drawing.Point(14, 238);
+            this.progressBar.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(388, 24);
+            this.progressBar.Size = new System.Drawing.Size(521, 26);
             this.progressBar.TabIndex = 2;
+            // 
+            // journalRichBox
+            // 
+            this.journalRichBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.journalRichBox.BackColor = System.Drawing.SystemColors.Window;
+            this.journalRichBox.Location = new System.Drawing.Point(14, 13);
+            this.journalRichBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.journalRichBox.Name = "journalRichBox";
+            this.journalRichBox.ReadOnly = true;
+            this.journalRichBox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
+            this.journalRichBox.Size = new System.Drawing.Size(521, 218);
+            this.journalRichBox.TabIndex = 3;
+            this.journalRichBox.Text = "";
             // 
             // FrmPatch
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 14F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(412, 236);
+            this.ClientSize = new System.Drawing.Size(549, 272);
+            this.Controls.Add(this.journalRichBox);
             this.Controls.Add(this.progressBar);
-            this.Controls.Add(this.journalListBox);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.MaximizeBox = false;
             this.Name = "FrmPatch";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
@@ -74,7 +79,7 @@
         }
 
         #endregion
-        private System.Windows.Forms.ListBox journalListBox;
         private System.Windows.Forms.ProgressBar progressBar;
+        private System.Windows.Forms.RichTextBox journalRichBox;
     }
 }
