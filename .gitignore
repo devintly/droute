@@ -430,4 +430,5 @@ FodyWeavers.xsd
 
 # Post-Build Resources
 installer/Resources/droute_*.dll
+installer/Resources/Droute.UpdaterHook.dll
 updaterHook/Resources/droute_*.dll
