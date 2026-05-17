@@ -1,59 +1,124 @@
 ﻿using Droute.Core;
 using HarmonyLib;
 using System;
+using System.IO;
 using System.Reflection;
-using System.Windows.Forms;
 
 namespace Droute.UpdaterHook
 {
     public class Bootstrapper : AppDomainManager
     {
-        private static readonly Harmony HarmonyInstance = new Harmony("com.snowluwu.droute.updatehook");
-
         public override void InitializeNewDomain(AppDomainSetup appDomainInfo)
         {
-            Logger.Info("AppDomainManager initialized, waiting for Update.exe");
-            AppDomain.CurrentDomain.AssemblyLoad += OnAssemblyLoad;
+            try
+            {
+                AppDomain.CurrentDomain.AssemblyLoad += OnAssemblyLoad;
+                Logger.Debug("domain initialized, subscribing to assembly load events");
+            }
+            catch (Exception ex) 
+            {
+                Logger.Error($"failed to initialize domain manager: {ex.Message}");
+            }
         }
 
         private static void OnAssemblyLoad(object sender, AssemblyLoadEventArgs args)
         {
-            if (args.LoadedAssembly.GetName().Name.Equals("Update.exe", StringComparison.OrdinalIgnoreCase))
+            try
             {
-                AppDomain.CurrentDomain.AssemblyLoad -= OnAssemblyLoad;
-                Logger.Info("target assembly loaded!");
+                if (args?.LoadedAssembly == null) return;
 
-                Type type = args.LoadedAssembly.GetType("Squirrel.Update.Program");
-                if (type == null)
+                string name = args.LoadedAssembly.GetName()?.Name;
+                if (string.IsNullOrEmpty(name)) return;
+
+                if (name.Equals("Update.exe", StringComparison.OrdinalIgnoreCase))
                 {
-                    Logger.Error("failed to find Squirrel.Update.Program type");
-                    return;
-                }
+                    AppDomain.CurrentDomain.AssemblyLoad -= OnAssemblyLoad;
+                    Logger.Info("Update.exe loaded, preparing patches");
 
-                MethodInfo baseMethod = type.GetMethod("ProcessStart",
-                    BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-                if (baseMethod == null)
-                {
-                    Logger.Error("failed to find ProcessStart() info");
-                    return;
-                }
+                    Type type = args.LoadedAssembly.GetType("Squirrel.Update.Program");
+                    if (type == null)
+                    {
+                        Logger.Error("type \"Squirrel.Update.Program\" not found in assembly");
+                        return;
+                    }
 
-                MethodInfo prefixMethod = typeof(Bootstrapper).GetMethod(nameof(MyProcessStart),
-                    BindingFlags.Static | BindingFlags.Public);
-                if (prefixMethod == null)
-                {
-                    Logger.Error("failed to find internal MyProcessStart() info");
-                    return;
-                }
+                    MethodInfo baseMethod = type.GetMethod("ProcessStart",
+                        BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                    if (baseMethod == null)
+                    {
+                        Logger.Error("target method \"ProcessStart\" not found");
+                        return;
+                    }
 
-                HarmonyInstance.Patch(baseMethod, prefix: new HarmonyMethod(prefixMethod));
-                Logger.Info("hooks successfully installed for Squirrel.Update.Program.ProcessStart()");
+                    MethodInfo prefixMethod = typeof(Bootstrapper).GetMethod(nameof(MyProcessStart),
+                        BindingFlags.Static | BindingFlags.Public);
+                    if (prefixMethod == null)
+                    {
+                        Logger.Error("detour method \"MyProcessStart]\" not found in hook assembly");
+                        return;
+                    }
+
+                    Logger.Debug("applying harmony prefix patch for ProcessStart");
+
+                    var harmony = new Harmony("Droute.UpdaterHook");
+                    harmony.Patch(baseMethod, prefix: new HarmonyMethod(prefixMethod));
+
+                    Logger.Info("hooks successfully installed");
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"exception during assembly load interception: {ex.Message}");
             }
         }
 
-        internal static bool MyProcessStart(object __instance, string exeName, string arguments, bool shouldWait)
+        public static bool MyProcessStart(object __instance, string exeName, string arguments, bool shouldWait)
         {
-            MessageBox.Show($"yap! \nexeName: {exeName}\n args: {arguments}");
+            Logger.Trace($"ProcessStart triggered: exeName=\"{exeName}\", args=\"{arguments}\", wait={shouldWait}");
+
+            try
+            {
+                string branchRoot = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                if (string.IsNullOrEmpty(branchRoot))
+                {
+                    Logger.Error("AppContext.BaseDirectory returned null or empty");
+                    return true;
+                }
+
+                Logger.Debug($"resolving last version path from: {branchRoot}");
+                string appDirectory = DiscordManager.GetLastVersionPath(branchRoot);
+
+                if (string.IsNullOrEmpty(appDirectory) || !Directory.Exists(appDirectory))
+                {
+                    Logger.Error($"resolved app directory is invalid or missing: {appDirectory}");
+                    return true;
+                }
+
+                Logger.Info($"target app directory: {appDirectory}");
+
+                string proxyPath = Path.Combine(appDirectory, PatchManager.MAIN_PROXY_DLL);
+                string droutePath = Path.Combine(appDirectory, "droute.dll");
+
+                // TODO: add check for the existence of a patch to avoid unnecessary actions (maybe ¯\_(ツ)_/¯) 
+
+                Logger.Info($"duplicating {PatchManager.MAIN_PROXY_DLL} to: {proxyPath}");
+
+                PatchManager.DuplicateProxy(proxyPath);
+
+                Logger.Info("applying PE patch...");
+                PatchManager.ApplyPEPatch(proxyPath);
+
+                Logger.Info("writing droute.dll payload...");
+                File.WriteAllBytes(droutePath, Properties.Resources.Droute64);
+
+                Logger.Debug("patching completed successfully!");
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"unexpected exception in MyProcessStart: {ex.Message}");
+                Logger.Trace($"stack trace: {ex.StackTrace}");
+            }
+
             return true;
         }
     }
