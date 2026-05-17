@@ -28,6 +28,9 @@
 
 		<Delete Files="@(FilesToDelete)" />
 
+	</Target>
+
+	<Target Name="CopyToInstallerResources" AfterTargets="Build">
 		<MakeDir Directories="$(MSBuildProjectDirectory)\..\installer\Resources" Condition="!Exists('$(MSBuildProjectDirectory)\..\installer\Resources')" />
 		<Copy SourceFiles="$(OutputPath)$(TargetName)$(TargetExt)" DestinationFolder="$(MSBuildProjectDirectory)\..\installer\Resources" />
 	</Target>
