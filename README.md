@@ -27,7 +27,7 @@ The project is inspired by the [force-proxy](https://github.com/runetfreedom/for
 ## How It Works
 
 ### Clean Integration
-Droute doesn't modify Discord's actual executable files. Instead, it hooks into the process using *DLL Hijacking* and .NET config files.
+Droute doesn't modify Discord's actual executable files. Instead, it hooks into the process using DLL Hijacking and .NET config files.
 
 ### Intercepting Traffic
 The tool places `version.dll` and `droute.dll` into the Discord folder.
