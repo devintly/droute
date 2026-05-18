@@ -1,46 +1,46 @@
 # Discord Droute (Native Proxy for Discord)
 
-**Droute** is a tool for integrating a SOCKS5 proxy into the Discord client for Windows. It resolves the lack of built-in proxy settings in Discord and eliminates the need to configure TUN interfaces or a VPN.
+**Droute** is a tool that adds SOCKS5 proxy support directly into the Discord Windows client. It fixes the lack of built-in proxy settings in Discord, so you don't have to mess with TUN interfaces or full-system VPNs.
 
-The project is inspired by the [force-proxy](https://github.com/runetfreedom/force-proxy) concept and uses the [MinHook](https://github.com/tsudakageyu/minhook) hooking library.
+The project is inspired by the [force-proxy](https://github.com/runetfreedom/force-proxy) concept and uses the [MinHook](https://github.com/tsudakageyu/minhook) library.
 
 ---
 
 ## Features
 
-- **Full Proxying:** Forces all Discord traffic through a specified server, ignoring system proxies, TUN interfaces, and VPNs.
-- **Voice Chat and Stream Support:** Proxies both TCP (chat, media) and UDP traffic, ensuring the functionality of voice channels and streams.
-- **Process-Level Isolation:** Operates locally within Discord's memory without creating services or altering Windows network settings.
-- **Update Resilience:** The patch automatically migrates whenever Discord updates.
-- **Multi-Client Support:** Fully compatible with Stable, Canary, and PTB builds.
+- **Full Proxying:** Routes all Discord traffic through your proxy, completely ignoring system proxy settings, TUN interfaces, or VPNs.
+- **Voice Chats & Streams:** Proxies both TCP (chat, media) and UDP traffic, so voice calls and screen shares work perfectly.
+- **Isolated:** Works entirely within Discord's memory. It doesn't create system services or change Windows network settings.
+- **Survives Updates:** The patch automatically reapplies itself whenever Discord updates.
+- **Multi-Client Support:** Works with Discord Stable, Canary, and PTB.
 
 ---
 
 ## Installation
 
-1. Download the latest version from the [releases page](https://github.com/snowluwu/droute/releases/latest).
-2. Run `droute.exe`, enter your SOCKS5 proxy details, and select your Discord build.
-3. Click the apply button to install the patch.
+1. Download the latest release from the [releases page](https://github.com/snowluwu/droute/releases/latest).
+2. Open `droute.exe`, enter your SOCKS5 proxy details, and choose your Discord build.
+3. Click apply to install the patch.
 
 ---
 
-## Architecture and Technical Details
+## How It Works
 
-### Non-Invasive Integration
-Droute does not modify Discord's executable code. Memory injection is achieved using *DLL Hijacking* and .NET configuration files.
+### Clean Integration
+Droute doesn't modify Discord's actual executable files. Instead, it hooks into the process using *DLL Hijacking* and .NET config files.
 
-### Traffic Interception Mechanism
-The libraries `version.dll` and `droute.dll` are placed into the Discord directory.
-- Upon startup, Discord loads the local `version.dll` instead of the system one.
-- The local `version.dll` forwards legitimate calls to the original system library while simultaneously loading `droute.dll`.
-- Using **MinHook**, `droute.dll` intercepts Discord's low-level network calls and routes them to the proxy.
+### Intercepting Traffic
+The tool places `version.dll` and `droute.dll` into the Discord folder.
+- When Discord starts, it loads the local `version.dll` instead of the system one.
+- This local `version.dll` forwards all standard requests to the real system library while loading `droute.dll` in the background.
+- Using **MinHook**, `droute.dll` hooks into Discord's low-level network functions and redirects traffic to your proxy.
 
-### Update Persistence Mechanism
-When Discord updates, it moves to a directory with a new version number. Droute intercepts this process:
-- A `.config` file for the .NET application is added to the folder containing `Update.exe` (Squirrel Updater).
-- When `Update.exe` runs, it automatically loads the `Droute.UpdaterHook.dll` library.
-- This library hooks the process creation function. As soon as Squirrel Updater downloads an update and launches the new Discord version, the hook copies the patch files into the new application directory before it starts.
+### Handling Discord Updates
+When Discord updates, it creates a folder with the new version number. Droute hooks into this update process to stay active:
+- It drops a `.config` file for the .NET application into the folder with `Update.exe` (Squirrel Updater).
+- When `Update.exe` runs, it automatically loads `Droute.UpdaterHook.dll`.
+- This library hooks the process creation function. As soon as Squirrel Updater creates the new version directory, the hook patches it before the new Discord client even launches.
 
-### Configuration and Logging
-- **Settings Storage:** All configurations are written to the Windows Registry at `HKCU/Software/droute` and can be edited via `regedit`.
-- **Diagnostics:** Main module logs are stored in `%Temp%\droute.log`, while update module logs are located in `droute.log` within the Discord root directory.
+### Settings & Logs
+- **Configuration:** All settings are stored in the Windows Registry at `HKCU/Software/droute` and can be tweaked via `regedit`.
+- **Logs:** The main module writes logs to `%Temp%\droute.log`, while the updater logs are saved to `droute.log` in the Discord root folder.
