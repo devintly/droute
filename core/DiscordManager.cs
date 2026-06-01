@@ -108,6 +108,14 @@ namespace Droute.Core
             }
         }
 
+        public static bool IsDiscordRunning(Branches branch) 
+        {
+            string processName = GetDiscordProcessName(branch);
+            if (Process.GetProcessesByName(processName).Length > 0)
+                return true;
+            return false;
+        }
+
         public static void Close(Branches branch)
         {
             string processName = GetDiscordProcessName(branch);
