@@ -3,6 +3,7 @@
 #include "src/core/logger.hpp"
 #include "src/hook/tcp.hpp"
 #include "src/hook/udp.hpp"
+#include "src/hook/process.hpp"
 
 namespace droute {
 
@@ -49,6 +50,8 @@ namespace droute {
             if (!HookOne(L"ws2_32.dll", "WSAEventSelect", Mine_WSAEventSelect, (void**)&Real_WSAEventSelect)) return false;
             if (!HookOne(L"ws2_32.dll", "WSAAsyncSelect", Mine_WSAAsyncSelect, (void**)&Real_WSAAsyncSelect)) return false;
             if (!HookOne(L"ws2_32.dll", "ioctlsocket", Mine_ioctlsocket, (void**)&Real_ioctlsocket)) return false;
+
+            if (!HookOne(L"kernel32.dll", "CreateProcessW", Mine_CreateProcessW, (void**)&Real_CreateProcessW)) return false;
 
             if (MH_EnableHook(MH_ALL_HOOKS) != MH_OK) {
                 LOG_ERROR("MH_EnableHook failed");
