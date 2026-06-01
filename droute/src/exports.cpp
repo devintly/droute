@@ -5,6 +5,7 @@
 #include "src/core/utils.hpp"
 #include "src/hook/hooks.hpp"
 #include "src/hook/udp.hpp"
+#include "src/hook/process.hpp"
 
 namespace droute {
 
@@ -68,6 +69,13 @@ namespace droute {
         char exePath[MAX_PATH];
         GetModuleFileNameA(NULL, exePath, MAX_PATH);
         LOG_INFO("loaded into process: %s", exePath);
+
+        wchar_t buf[MAX_PATH];
+        GetModuleFileNameW(NULL, buf, MAX_PATH);
+        g_ourDir = buf;
+        size_t pos = g_ourDir.rfind(L'\\');
+        if (pos != std::wstring::npos)
+            g_ourDir = g_ourDir.substr(0, pos);
 
         if (!Hooks::Install()) {
             LOG_ERROR("hook installation failed");
