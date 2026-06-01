@@ -242,7 +242,7 @@
     <value>318, 60</value>
   </data>
   <data name="label7.Text" xml:space="preserve">
-    <value>Нативная интеграция прокси в Discord. Перенаправляет весь трафик приложения на SOCKS прокси.</value>
+    <value>Нативная интеграция прокси в Discord. Перенаправляет весь трафик приложения на SOCKS5 прокси.</value>
   </data>
   <data name="pictureBox1.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
