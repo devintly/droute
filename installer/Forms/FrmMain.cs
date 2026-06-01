@@ -136,7 +136,9 @@ namespace Droute.Installer.Forms
         {
             _selectedBranch = 
                 (DiscordManager.Branches)branchesComboBox.SelectedIndex;
-            
+
+            bool isDiscordRunning = DiscordManager.IsDiscordRunning(_selectedBranch);
+
             if (Settings.Default.AutoRestartPatch)
                 DiscordManager.Close(_selectedBranch);
 
@@ -146,7 +148,11 @@ namespace Droute.Installer.Forms
                 {
                     if (Settings.Default.AutoRestartPatch && action == FrmPatch.PatchAction.Install)
                     {
-                        this.BeginInvoke(new Action(() => DiscordManager.Launch(_selectedBranch)));
+                        this.BeginInvoke(new Action(() =>
+                        {
+                            if (isDiscordRunning) 
+                                DiscordManager.Launch(_selectedBranch);
+                        }));
                     }
                 };
 
