@@ -16,7 +16,7 @@ namespace Droute.Installer.Classes
         {
             try
             {
-                OnLog?.Invoke($"[ STATUS ] Instalation started for Discord {branch.ToString()}...");
+                OnLog?.Invoke($"[ STATUS ] Installation started for Discord {branch.ToString()}...");
                 OnProgressChanged?.Invoke(0);
 
                 OnLog?.Invoke("[ STAGE ] Initializing and verifying paths...");
@@ -66,7 +66,7 @@ namespace Droute.Installer.Classes
                 File.WriteAllBytes(updaterHookPath, Properties.Resources.UpdaterHook);
                 OnProgressChanged?.Invoke(90);
 
-                OnLog?.Invoke($"[ STATUS ] Instalation successfully completed!");
+                OnLog?.Invoke($"[ STATUS ] Installation successfully completed!");
                 OnProgressChanged?.Invoke(100);
 
                 return true;

@@ -75,20 +75,20 @@
             // 
             // tabControl
             // 
+            resources.ApplyResources(this.tabControl, "tabControl");
             this.tabControl.Controls.Add(this.tabPage1);
             this.tabControl.Controls.Add(this.tabPage2);
-            resources.ApplyResources(this.tabControl, "tabControl");
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
             // 
             // tabPage1
             // 
+            resources.ApplyResources(this.tabPage1, "tabPage1");
             this.tabPage1.Controls.Add(this.openLogsButton);
             this.tabPage1.Controls.Add(this.removePatchButton);
             this.tabPage1.Controls.Add(this.installPatchButton);
             this.tabPage1.Controls.Add(this.groupBox2);
             this.tabPage1.Controls.Add(this.groupBox1);
-            resources.ApplyResources(this.tabPage1, "tabPage1");
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
@@ -125,12 +125,12 @@
             // 
             // branchesComboBox
             // 
+            resources.ApplyResources(this.branchesComboBox, "branchesComboBox");
             this.branchesComboBox.FormattingEnabled = true;
             this.branchesComboBox.Items.AddRange(new object[] {
             resources.GetString("branchesComboBox.Items"),
             resources.GetString("branchesComboBox.Items1"),
             resources.GetString("branchesComboBox.Items2")});
-            resources.ApplyResources(this.branchesComboBox, "branchesComboBox");
             this.branchesComboBox.Name = "branchesComboBox";
             // 
             // label6
@@ -246,6 +246,7 @@
             // 
             // tabPage2
             // 
+            resources.ApplyResources(this.tabPage2, "tabPage2");
             this.tabPage2.Controls.Add(this.versionLabel);
             this.tabPage2.Controls.Add(this.licenseLink);
             this.tabPage2.Controls.Add(this.repoLink);
@@ -257,7 +258,6 @@
             this.tabPage2.Controls.Add(this.label7);
             this.tabPage2.Controls.Add(this.pictureBox1);
             this.tabPage2.Controls.Add(this.label5);
-            resources.ApplyResources(this.tabPage2, "tabPage2");
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
@@ -269,8 +269,8 @@
             // 
             // licenseLink
             // 
-            this.licenseLink.ActiveLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(91)))), ((int)(((byte)(102)))), ((int)(((byte)(222)))));
             resources.ApplyResources(this.licenseLink, "licenseLink");
+            this.licenseLink.ActiveLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(91)))), ((int)(((byte)(102)))), ((int)(((byte)(222)))));
             this.licenseLink.LinkColor = System.Drawing.Color.Black;
             this.licenseLink.Name = "licenseLink";
             this.licenseLink.TabStop = true;
@@ -279,8 +279,8 @@
             // 
             // repoLink
             // 
-            this.repoLink.ActiveLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(91)))), ((int)(((byte)(102)))), ((int)(((byte)(222)))));
             resources.ApplyResources(this.repoLink, "repoLink");
+            this.repoLink.ActiveLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(91)))), ((int)(((byte)(102)))), ((int)(((byte)(222)))));
             this.repoLink.LinkColor = System.Drawing.Color.Black;
             this.repoLink.Name = "repoLink";
             this.repoLink.TabStop = true;
@@ -289,8 +289,8 @@
             // 
             // inspiredLink
             // 
-            this.inspiredLink.ActiveLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(91)))), ((int)(((byte)(102)))), ((int)(((byte)(222)))));
             resources.ApplyResources(this.inspiredLink, "inspiredLink");
+            this.inspiredLink.ActiveLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(91)))), ((int)(((byte)(102)))), ((int)(((byte)(222)))));
             this.inspiredLink.LinkColor = System.Drawing.Color.Black;
             this.inspiredLink.Name = "inspiredLink";
             this.inspiredLink.TabStop = true;
