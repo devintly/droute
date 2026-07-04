@@ -4,6 +4,8 @@
 
 The project is inspired by the [force-proxy](https://github.com/runetfreedom/force-proxy) concept and uses the [MinHook](https://github.com/tsudakageyu/minhook) library.
 
+<img width="451" height="415" alt="image" src="https://github.com/user-attachments/assets/234c3d27-15c9-4a41-a741-c746b6d3bc6b" />
+
 ---
 
 ## Features
