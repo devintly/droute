@@ -23,12 +23,6 @@ namespace Droute.Installer.Forms
         private void authCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             authPanel.Enabled = authCheckBox.Checked;
-
-            if (!authCheckBox.Checked)
-            {
-                userTextBox.Text = "";
-                passwordTextBox.Text = "";
-            }
         }
 
         private void FrmMain_Load(object sender, EventArgs e)
@@ -42,8 +36,7 @@ namespace Droute.Installer.Forms
             if (string.IsNullOrEmpty(_cfg.User) && string.IsNullOrEmpty(_cfg.Password))
                 authCheckBox.Checked = false;
 
-            autoRestartPatchCheckbox.Checked = Settings.Default.AutoRestartPatch;
-            autoRestartConfigCheckbox.Checked = Settings.Default.AutoRestartConfig;
+            this.LoadDiscordActionSettings();
 
             // -- Set Version in About tab --
             var versionInfo = new Version(Application.ProductVersion);
@@ -51,31 +44,34 @@ namespace Droute.Installer.Forms
 
             // -- Set branches --
             branchesComboBox.Items.Clear();
+            branchesComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
 
             var availableBranches = DiscordManager.GetInstalledBranches();
             if (availableBranches.Count == 0)
             {
-                branchesComboBox.Items.Add("Stable");
-                branchesComboBox.Text = "Stable";
+                branchesComboBox.Items.Add(DiscordManager.Branches.Stable);
+                branchesComboBox.SelectedIndex = 0;
+                _selectedBranch = DiscordManager.Branches.Stable;
                 return;
             }
 
             foreach (var branch in availableBranches)
                 branchesComboBox.Items.Add(branch);
 
-            branchesComboBox.Text = availableBranches[0].ToString();
+            branchesComboBox.SelectedItem = availableBranches[0];
 
-            _selectedBranch = (DiscordManager.Branches)branchesComboBox.SelectedIndex;
+            _selectedBranch = availableBranches[0];
         }
 
         private void applyCfgButton_Click(object sender, EventArgs e)
         {
-            ApplyConfig();
-            if (Settings.Default.AutoRestartConfig)
-            {
-                DiscordManager.Close(_selectedBranch); 
-                DiscordManager.Launch(_selectedBranch);
-            }
+            _selectedBranch = GetSelectedBranch();
+            bool restartDiscord = Settings.Default.AutoRestartConfig && DiscordManager.IsDiscordRunning(_selectedBranch);
+
+            this.ApplyConfig();
+
+            if (restartDiscord)
+                this.RestartDiscord(_selectedBranch);
         }
 
         private void discordActionsCheckbox_CheckedChanged(object sender, EventArgs e)
@@ -117,27 +113,29 @@ namespace Droute.Installer.Forms
 
         private void installPatchButton_Click(object sender, EventArgs e)
         {
-            ApplyConfig();
-            HandlePatchAction(FrmPatch.PatchAction.Install);
+            this.ApplyConfig();
+            this.HandlePatchAction(FrmPatch.PatchAction.Install);
         }
+
         private void removePatchButton_Click(object sender, EventArgs e) 
-            => HandlePatchAction(FrmPatch.PatchAction.Remove);
+            => this.HandlePatchAction(FrmPatch.PatchAction.Remove);
 
         private void ApplyConfig()
         {
-            _cfg.Host = hostTextBox.Text;
+            _cfg.Host = hostTextBox.Text.Trim();
             _cfg.Port = (int)portNumeric.Value;
-            _cfg.User = userTextBox.Text;
-            _cfg.Password = passwordTextBox.Text;
+            _cfg.User = authCheckBox.Checked ? userTextBox.Text : string.Empty;
+            _cfg.Password = authCheckBox.Checked ? passwordTextBox.Text : string.Empty;
             _cfg.Apply();
         }
 
         private void HandlePatchAction(FrmPatch.PatchAction action)
         {
-            _selectedBranch = 
-                (DiscordManager.Branches)branchesComboBox.SelectedIndex;
+            _selectedBranch = this.GetSelectedBranch();
 
-            bool isDiscordRunning = DiscordManager.IsDiscordRunning(_selectedBranch);
+            bool restartDiscord = action == FrmPatch.PatchAction.Install &&
+                Settings.Default.AutoRestartPatch &&
+                DiscordManager.IsDiscordRunning(_selectedBranch);
 
             if (Settings.Default.AutoRestartPatch)
                 DiscordManager.Close(_selectedBranch);
@@ -146,17 +144,50 @@ namespace Droute.Installer.Forms
             {
                 frm.OnSuccess += () =>
                 {
-                    if (Settings.Default.AutoRestartPatch && action == FrmPatch.PatchAction.Install)
-                    {
-                        this.BeginInvoke(new Action(() =>
-                        {
-                            if (isDiscordRunning) 
-                                DiscordManager.Launch(_selectedBranch);
-                        }));
-                    }
+                    if (restartDiscord)
+                        this.LaunchDiscord(_selectedBranch);
                 };
 
                 frm.ShowDialog();
+            }
+        }
+
+        private void LoadDiscordActionSettings()
+        {
+            autoRestartPatchCheckbox.CheckedChanged -= discordActionsCheckbox_CheckedChanged;
+            autoRestartConfigCheckbox.CheckedChanged -= discordActionsCheckbox_CheckedChanged;
+
+            autoRestartPatchCheckbox.Checked = Settings.Default.AutoRestartPatch;
+            autoRestartConfigCheckbox.Checked = Settings.Default.AutoRestartConfig;
+
+            autoRestartPatchCheckbox.CheckedChanged += discordActionsCheckbox_CheckedChanged;
+            autoRestartConfigCheckbox.CheckedChanged += discordActionsCheckbox_CheckedChanged;
+        }
+
+        private DiscordManager.Branches GetSelectedBranch()
+        {
+            if (branchesComboBox.SelectedItem is DiscordManager.Branches branch)
+                return branch;
+
+            return DiscordManager.Branches.Stable;
+        }
+
+        private void RestartDiscord(DiscordManager.Branches branch)
+        {
+            DiscordManager.Close(branch);
+            this.LaunchDiscord(branch);
+        }
+
+        private void LaunchDiscord(DiscordManager.Branches branch)
+        {
+            try
+            {
+                DiscordManager.Launch(branch);
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine($"error during Discord launch: {ex.ToString()}");
+                MessageBox.Show(ex.Message, "Unable to launch Discord", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
     }
