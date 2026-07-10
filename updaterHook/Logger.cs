@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Droute.Core
+namespace Droute.UpdaterHook
 {
     public static class Logger
     {
