@@ -13,7 +13,6 @@ namespace droute {
 
         uint32_t connectTimeout = 5000;
         uint32_t reconnectInterval = 3000;
-        uint32_t retryTimeout = 10000;
         LogLevel logLevel = LogLevel::Info;
 
         bool Load();

@@ -67,10 +67,6 @@ namespace droute {
             if (tmp > 0) reconnectInterval = tmp;
             else LOG_WARN("invalid ReconnectInterval=0, using default %u", reconnectInterval);
         }
-        if (ReadDword("RetryTimeout", tmp)) {
-            if (tmp > 0) retryTimeout = tmp;
-            else LOG_WARN("invalid RetryTimeout=0, using default %u", retryTimeout);
-        }
         if (ReadDword("LogLevel", tmp)) {
             if (tmp <= static_cast<uint32_t>(LogLevel::Error)) {
                 logLevel = static_cast<LogLevel>(tmp);
@@ -108,10 +104,10 @@ namespace droute {
         if (strcmp(authState, "incomplete") == 0)
             LOG_WARN("proxy credentials are incomplete; authentication is disabled");
 
-        LOG_INFO("config source=%s proxy=%s auth=%s connect_timeout_ms=%u retry_timeout_ms=%u reconnect_interval_ms=%u log_level=%s",
+        LOG_INFO("config source=%s proxy=%s auth=%s connect_timeout_ms=%u reconnect_interval_ms=%u log_level=%s",
                  hasRegistryConfig ? "registry" : "defaults",
                  AddrToString(g_proxyAddr).c_str(),
-                 authState, connectTimeout, retryTimeout, reconnectInterval, LevelToString(logLevel));
+                 authState, connectTimeout, reconnectInterval, LevelToString(logLevel));
         return hasRegistryConfig;
     }
 
