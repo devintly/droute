@@ -10,22 +10,30 @@ namespace droute {
     bool Config::Load() {
         HKEY hKey = nullptr;
         LONG res = RegOpenKeyExA(HKEY_CURRENT_USER, "Software\\droute", 0, KEY_READ, &hKey);
-        if (res != ERROR_SUCCESS) {
-            LOG_WARN("registry key not found, using defaults");
-            return false;
-        }
+        const bool hasRegistryConfig = res == ERROR_SUCCESS;
+        if (!hasRegistryConfig)
+            LOG_WARN("registry key not found (error=%ld), using defaults", res);
 
         auto ReadString = [&](const char* name, std::string& out) -> bool {
-            char buf[512] = {};
-            DWORD type = 0, size = sizeof(buf);
-            if (RegQueryValueExA(hKey, name, nullptr, &type, (LPBYTE)buf, &size) == ERROR_SUCCESS && type == REG_SZ) {
-                out = buf;
-                return true;
-            }
-            return false;
+            if (!hasRegistryConfig)
+                return false;
+
+            DWORD type = 0;
+            DWORD size = 0;
+            if (RegQueryValueExA(hKey, name, nullptr, &type, nullptr, &size) != ERROR_SUCCESS || type != REG_SZ || size == 0)
+                return false;
+
+            std::vector<char> buf(size + 1, '\0');
+            if (RegQueryValueExA(hKey, name, nullptr, &type, reinterpret_cast<LPBYTE>(buf.data()), &size) != ERROR_SUCCESS)
+                return false;
+
+            out.assign(buf.data(), strnlen_s(buf.data(), size));
+            return true;
         };
 
         auto ReadDword = [&](const char* name, uint32_t& out) -> bool {
+            if (!hasRegistryConfig)
+                return false;
             DWORD type = 0, val = 0, size = sizeof(val);
             if (RegQueryValueExA(hKey, name, nullptr, &type, (LPBYTE)&val, &size) == ERROR_SUCCESS && type == REG_DWORD) {
                 out = val;
@@ -35,20 +43,44 @@ namespace droute {
         };
 
         ReadString("Host", host);
+        if (host.empty()) {
+            host = "127.0.0.1";
+            LOG_WARN("proxy host is empty, using default %s", host.c_str());
+        }
         uint32_t portTmp = port;
-        if (ReadDword("Port", portTmp)) port = static_cast<uint16_t>(portTmp);
+        if (ReadDword("Port", portTmp)) {
+            if (portTmp > 0 && portTmp <= UINT16_MAX) {
+                port = static_cast<uint16_t>(portTmp);
+            } else {
+                LOG_WARN("invalid proxy port %u, using default %u", portTmp, port);
+            }
+        }
         ReadString("User", user);
         ReadString("Password", password);
 
         uint32_t tmp;
-        if (ReadDword("ConnectTimeout", tmp))       connectTimeout = tmp;
-        if (ReadDword("ReconnectInterval", tmp))    reconnectInterval = tmp;
-        if (ReadDword("RetryTimeout", tmp))    retryTimeout = tmp;
+        if (ReadDword("ConnectTimeout", tmp)) {
+            if (tmp > 0 && tmp <= INT_MAX) connectTimeout = tmp;
+            else LOG_WARN("invalid ConnectTimeout=%u, using default %u", tmp, connectTimeout);
+        }
+        if (ReadDword("ReconnectInterval", tmp)) {
+            if (tmp > 0) reconnectInterval = tmp;
+            else LOG_WARN("invalid ReconnectInterval=0, using default %u", reconnectInterval);
+        }
+        if (ReadDword("RetryTimeout", tmp)) {
+            if (tmp > 0) retryTimeout = tmp;
+            else LOG_WARN("invalid RetryTimeout=0, using default %u", retryTimeout);
+        }
         if (ReadDword("LogLevel", tmp)) {
-            if (tmp <= 4) logLevel = static_cast<LogLevel>(tmp);
+            if (tmp <= static_cast<uint32_t>(LogLevel::Error)) {
+                logLevel = static_cast<LogLevel>(tmp);
+            } else {
+                LOG_WARN("invalid LogLevel=%u, using default %s", tmp, LevelToString(logLevel));
+            }
         }
 
-        RegCloseKey(hKey);
+        if (hKey)
+            RegCloseKey(hKey);
 
         memset(&g_proxyAddr, 0, sizeof(g_proxyAddr));
         g_proxyAddr.sin_family = AF_INET;
@@ -60,20 +92,27 @@ namespace droute {
             hints.ai_family = AF_INET;
             hints.ai_socktype = SOCK_STREAM;
             addrinfo* result = nullptr;
-            if (getaddrinfo(host.c_str(), nullptr, &hints, &result) == 0 && result) {
+            const int gaiError = getaddrinfo(host.c_str(), nullptr, &hints, &result);
+            if (gaiError == 0 && result) {
                 g_proxyAddr.sin_addr = reinterpret_cast<sockaddr_in*>(result->ai_addr)->sin_addr;
                 freeaddrinfo(result);
             } else {
-                LOG_ERROR("failed to resolve '%s'", host.c_str());
+                LOG_ERROR("failed to resolve '%s': %d; using 127.0.0.1", host.c_str(), gaiError);
                 inet_pton(AF_INET, "127.0.0.1", &g_proxyAddr.sin_addr);
             }
         }
 
-        LOG_INFO("proxy=%s auth=%s timeout=%d retry=%d",
+        const char* authState = user.empty() && password.empty()
+            ? "none"
+            : (!user.empty() && !password.empty() ? "set" : "incomplete");
+        if (strcmp(authState, "incomplete") == 0)
+            LOG_WARN("proxy credentials are incomplete; authentication is disabled");
+
+        LOG_INFO("config source=%s proxy=%s auth=%s connect_timeout_ms=%u retry_timeout_ms=%u reconnect_interval_ms=%u log_level=%s",
+                 hasRegistryConfig ? "registry" : "defaults",
                  AddrToString(g_proxyAddr).c_str(),
-                 user.empty() ? "none" : "set",
-                 connectTimeout, retryTimeout);
-        return true;
+                 authState, connectTimeout, retryTimeout, reconnectInterval, LevelToString(logLevel));
+        return hasRegistryConfig;
     }
 
 }
