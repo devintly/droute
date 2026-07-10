@@ -9,7 +9,8 @@ namespace droute {
 
     static HANDLE g_logFile = INVALID_HANDLE_VALUE;
     static std::mutex g_logMutex;
-    static LogLevel g_logLevel = LogLevel::Info;
+    static std::atomic<LogLevel> g_logLevel{ LogLevel::Info };
+    static constexpr LONGLONG MAX_LOG_FILE_SIZE = 2LL * 1024 * 1024;
 
     const char* LevelToString(LogLevel level) {
         switch (level) {
@@ -29,6 +30,23 @@ namespace droute {
             path[0] = '.'; path[1] = '\\'; path[2] = '\0';
         }
         strcat_s(path, MAX_PATH, "droute.log");
+
+        HANDLE existing = CreateFileA(path, GENERIC_READ,
+            FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
+            NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+        if (existing != INVALID_HANDLE_VALUE) {
+            LARGE_INTEGER size = {};
+            const bool shouldRotate = GetFileSizeEx(existing, &size) && size.QuadPart >= MAX_LOG_FILE_SIZE;
+            CloseHandle(existing);
+            if (shouldRotate) {
+                const std::string backupPath = std::string(path) + ".1";
+                if (!MoveFileExA(path, backupPath.c_str(), MOVEFILE_REPLACE_EXISTING)) {
+                    char msg[256];
+                    snprintf(msg, sizeof(msg), "droute: failed to rotate log '%s': %lu\n", path, GetLastError());
+                    OutputDebugStringA(msg);
+                }
+            }
+        }
 
         HANDLE hFile = CreateFileA(path,
             FILE_APPEND_DATA,
@@ -52,13 +70,19 @@ namespace droute {
 
         SYSTEMTIME st;
         GetLocalTime(&st);
-        char header[256];
+        char exePath[MAX_PATH] = {};
+        GetModuleFileNameA(NULL, exePath, MAX_PATH);
+        char header[512];
         int headerLen = snprintf(header, sizeof(header),
-            "// droute session started at %04d-%02d-%02d %02d:%02d:%02d.%03d\n",
-            st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond, st.wMilliseconds);
+            "// droute session started at %04d-%02d-%02d %02d:%02d:%02d.%03d; pid=%lu; process=%s\n",
+            st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond, st.wMilliseconds,
+            GetCurrentProcessId(), exePath);
 
-        DWORD written;
-        WriteFile(g_logFile, header, static_cast<DWORD>(headerLen), &written, NULL);
+        if (headerLen > 0) {
+            DWORD written;
+            DWORD length = static_cast<DWORD>(min(headerLen, static_cast<int>(sizeof(header) - 1)));
+            WriteFile(g_logFile, header, length, &written, NULL);
+        }
 
         return true;
     }
@@ -72,12 +96,11 @@ namespace droute {
     }
 
     void Logger::SetLevel(LogLevel level) {
-        std::lock_guard<std::mutex> lock(g_logMutex);
-        g_logLevel = level;
+        g_logLevel.store(level, std::memory_order_relaxed);
     }
 
     void Logger::Write(LogLevel level, const char* file, int line, const char* fmt, ...) {
-        if (level < g_logLevel) return;
+        if (level < g_logLevel.load(std::memory_order_relaxed)) return;
 
         const char* basename = file;
         const char* p = strrchr(file, '\\');
@@ -97,9 +120,10 @@ namespace droute {
 
         char buf[2300];
         int bufLen = snprintf(buf, sizeof(buf),
-            "[%04d-%02d-%02d %02d:%02d:%02d.%03d] [TID:%lu] [%s] [%s:%d] %s\n",
+            "[%04d-%02d-%02d %02d:%02d:%02d.%03d] [PID:%lu] [TID:%lu] [%s] [%s:%d] %s\n",
             st.wYear, st.wMonth, st.wDay,
             st.wHour, st.wMinute, st.wSecond, st.wMilliseconds,
+            GetCurrentProcessId(),
             GetCurrentThreadId(),
             LevelToString(level),
             basename, line,
@@ -108,7 +132,11 @@ namespace droute {
         std::lock_guard<std::mutex> lock(g_logMutex);
         if (g_logFile != INVALID_HANDLE_VALUE) {
             DWORD written;
-            WriteFile(g_logFile, buf, static_cast<DWORD>(bufLen), &written, NULL);
+            if (bufLen > 0) {
+                DWORD length = static_cast<DWORD>(min(bufLen, static_cast<int>(sizeof(buf) - 1)));
+                if (!WriteFile(g_logFile, buf, length, &written, NULL) || written != length)
+                    OutputDebugStringA(buf);
+            }
         } else {
             OutputDebugStringA(buf);
         }

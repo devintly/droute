@@ -10,7 +10,6 @@
 namespace droute {
 
     static std::atomic<bool> g_running{ false };
-    static std::thread g_worker;
 
     void ReconnectWorker() {
         while (g_running.load(std::memory_order_relaxed)) {
@@ -56,6 +55,8 @@ namespace droute {
             return;
         }
 
+        const uint64_t startedAt = GetTickCount64();
+
         WSADATA wsa;
         if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) {
             OutputDebugStringA("droute: WSAStartup failed\n");
@@ -83,7 +84,13 @@ namespace droute {
         }
 
         g_running = true;
-        g_worker = std::thread(ReconnectWorker);
+        try {
+            std::thread(ReconnectWorker).detach();
+        } catch (...) {
+            g_running = false;
+            LOG_ERROR("failed to start UDP reconnect worker");
+        }
+        LOG_INFO("initialized elapsed_ms=%llu", GetTickCount64() - startedAt);
     }
 
 }
@@ -96,13 +103,6 @@ extern "C" __declspec(dllexport) BOOL APIENTRY DllMain(HMODULE hModule, DWORD re
         break;
 
     case DLL_PROCESS_DETACH:
-        droute::g_running = false;
-        if (droute::g_worker.joinable()) {
-            droute::g_worker.join();
-        }
-        droute::Hooks::Remove();
-        droute::Logger::Shutdown();
-        WSACleanup();
         break;
     }
     return TRUE;

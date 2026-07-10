@@ -9,45 +9,29 @@
 namespace droute {
 
     int ConnectToProxy(SOCKET s) {
-        auto start = GetTickCount64();
-
-        while (true) {
-            int rc = Hooks::Real_connect(s, reinterpret_cast<const sockaddr*>(&g_proxyAddr), sizeof(g_proxyAddr));
-            if (rc == SOCKET_ERROR) {
-                int err = WSAGetLastError();
-                if (err == WSAEWOULDBLOCK) {
-                    if (!WaitForWrite(s, static_cast<int>(g_cfg.connectTimeout))) {
-                        if (GetTickCount64() - start >= g_cfg.retryTimeout) {
-                            WSASetLastError(WSAETIMEDOUT);
-                            return SOCKET_ERROR;
-                        }
-                        Sleep(g_cfg.reconnectInterval);
-                        continue;
-                    }
-                    int soErr = 0; int soLen = sizeof(soErr);
-                    getsockopt(s, SOL_SOCKET, SO_ERROR, reinterpret_cast<char*>(&soErr), &soLen);
-                    if (soErr != 0) {
-                        if (GetTickCount64() - start >= g_cfg.retryTimeout) {
-                            WSASetLastError(soErr);
-                            return SOCKET_ERROR;
-                        }
-                        Sleep(g_cfg.reconnectInterval);
-                        continue;
-                    }
-                } else if (err == WSAECONNREFUSED || err == WSAETIMEDOUT || err == WSAENETUNREACH) {
-                    if (GetTickCount64() - start >= g_cfg.retryTimeout) {
-                        WSASetLastError(err);
-                        return SOCKET_ERROR;
-                    }
-                    Sleep(g_cfg.reconnectInterval);
-                    continue;
-                } else {
-                    return SOCKET_ERROR;
-                }
-            }
-
+        int rc = Hooks::Real_connect(s, reinterpret_cast<const sockaddr*>(&g_proxyAddr), sizeof(g_proxyAddr));
+        if (rc == 0)
             return 0;
+
+        int err = WSAGetLastError();
+        if (err != WSAEWOULDBLOCK)
+            return SOCKET_ERROR;
+
+        if (!WaitForWrite(s, static_cast<int>(g_cfg.connectTimeout))) {
+            WSASetLastError(WSAETIMEDOUT);
+            return SOCKET_ERROR;
         }
+
+        int soErr = 0;
+        int soLen = sizeof(soErr);
+        if (getsockopt(s, SOL_SOCKET, SO_ERROR, reinterpret_cast<char*>(&soErr), &soLen) != 0)
+            return SOCKET_ERROR;
+        if (soErr != 0) {
+            WSASetLastError(soErr);
+            return SOCKET_ERROR;
+        }
+
+        return 0;
     }
 
     int Socks5ProxyConnect(SOCKET s, const sockaddr_in& target) {
@@ -99,16 +83,25 @@ namespace droute {
             wasNonBlocking = g_nonBlockingSockets.count(s) != 0;
         }
 
-        LOG_DEBUG("connect -> %s via proxy", AddrToString(*addr).c_str());
+        const std::string target = AddrToString(*addr);
+        const uint64_t startedAt = GetTickCount64();
 
         int result = ConnectViaProxy(s, addr);
         if (result != 0) {
             int err = WSAGetLastError();
-            LOG_WARN("connect -> %s failed: %d", AddrToString(*addr).c_str(), err);
+            LOG_WARN("connect -> %s failed: wsa_error=%d elapsed_ms=%llu",
+                     target.c_str(), err, GetTickCount64() - startedAt);
             return SOCKET_ERROR;
         }
 
-        LOG_INFO("connect -> %s via proxy", AddrToString(*addr).c_str());
+        const uint64_t elapsed = GetTickCount64() - startedAt;
+        if (elapsed >= 1000) {
+            LOG_WARN("connect -> %s slow mode=%s elapsed_ms=%llu", target.c_str(),
+                     wasNonBlocking ? "nonblocking" : "blocking", elapsed);
+        } else {
+            LOG_DEBUG("connect -> %s via proxy mode=%s elapsed_ms=%llu", target.c_str(),
+                      wasNonBlocking ? "nonblocking" : "blocking", elapsed);
+        }
 
         if (wasNonBlocking) {
             WSASetLastError(WSAEWOULDBLOCK);

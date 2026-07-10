@@ -143,9 +143,13 @@ namespace droute {
             return SOCKET_ERROR;
         }
 
+        sockaddr_in relayAddr = it->second.relayAddr;
+        lock.unlock();
+
         auto packet = Socks5WrapUdp(*dst, buf, len);
-        return Hooks::Real_sendto(s, reinterpret_cast<const char*>(packet.data()), static_cast<int>(packet.size()),
-                                  0, reinterpret_cast<const sockaddr*>(&it->second.relayAddr), sizeof(it->second.relayAddr));
+        int result = Hooks::Real_sendto(s, reinterpret_cast<const char*>(packet.data()), static_cast<int>(packet.size()),
+                                        flags, reinterpret_cast<const sockaddr*>(&relayAddr), sizeof(relayAddr));
+        return result == static_cast<int>(packet.size()) ? len : result;
     }
 
     int WSAAPI Mine_WSASendTo(SOCKET s, LPWSABUF lpBuffers, DWORD dwBufferCount, LPDWORD lpNumberOfBytesSent,
