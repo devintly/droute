@@ -28,7 +28,6 @@ namespace Droute.Installer.Classes
 
         public int ConnectTimeout { get; set; } = 5000;
         public int ReconnectInterval { get; set; } = 3000;
-        public int RetryTimeout { get; set; } = 10000;
         public LogLevelValue LogLevel { get; set; } = LogLevelValue.Info;
 
         #endregion
