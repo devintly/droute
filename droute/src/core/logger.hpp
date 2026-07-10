@@ -12,6 +12,8 @@ namespace droute {
         Error = 4
     };
 
+    const char* LevelToString(LogLevel level);
+
     namespace Logger {
 
         bool Init();
