@@ -35,7 +35,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Other\vectors.ico</ApplicationIcon>
+    <ApplicationIcon>Other\droute.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -106,6 +106,7 @@
     <None Include="Resources\Update.exe.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Other\droute.ico" />
     <Content Include="Other\vectors.ico" />
     <None Include="Resources\Droute.UpdaterHook.dll" />
     <Content Include="Resources\droute_64.dll" />
