@@ -4,7 +4,11 @@
 
 The project is inspired by the [force-proxy](https://github.com/runetfreedom/force-proxy) concept and uses the [MinHook](https://github.com/tsudakageyu/minhook) library.
 
-<img width="451" height="415" alt="image" src="https://github.com/user-attachments/assets/234c3d27-15c9-4a41-a741-c746b6d3bc6b" />
+> [!WARNING]
+> **Droute is not a standalone tool for bypassing censorship or blocks.** 
+> It requires an existing SOCKS5 proxy to function. You must provide your own proxy server or run a local client like **FlClash, v2rayN, Nekobox, or Amnezia**. Droute only handles the routing part inside Discord.
+
+<img width="451" height="415" alt="image" src="https://github.com/user-attachments/assets/11509cf4-1a11-4744-92e6-d340c49de6cd" />
 
 ---
 
