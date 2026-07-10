@@ -38,6 +38,8 @@ namespace Droute.Installer.Classes
 
             if (autoUpdate)
                 Update();
+
+            Normalize();
         }
 
         public void Update()
@@ -61,7 +63,9 @@ namespace Droute.Installer.Classes
                             }
                             else if (prop.PropertyType.IsEnum)
                             {
-                                prop.SetValue(this, Enum.ToObject(prop.PropertyType, regValue));
+                                object enumValue = Enum.ToObject(prop.PropertyType, regValue);
+                                if (Enum.IsDefined(prop.PropertyType, enumValue))
+                                    prop.SetValue(this, enumValue);
                             }
                             else
                             {
@@ -76,12 +80,16 @@ namespace Droute.Installer.Classes
             {
                 Trace.WriteLine($"error during update configuration: {ex.ToString()}");
             }
+
+            Normalize();
         }
 
         public void Apply()
         {
             try
             {
+                Normalize();
+
                 using (RegistryKey rk = Registry.CurrentUser.CreateSubKey(REGISTRY_PATH))
                 {
                     foreach (var prop in this.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
@@ -103,6 +111,20 @@ namespace Droute.Installer.Classes
             {
                 Trace.WriteLine($"error during apply configuration: {ex.ToString()}");
             }
+        }
+
+        private void Normalize()
+        {
+            Host = string.IsNullOrWhiteSpace(Host) ? "127.0.0.1" : Host.Trim();
+
+            if (Port < 1 || Port > 65535)
+                Port = 1080;
+
+            if (ConnectTimeout < 100)
+                ConnectTimeout = 5000;
+
+            if (ReconnectInterval < 100)
+                ReconnectInterval = 3000;
         }
     }
 }
