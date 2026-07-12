@@ -113,6 +113,28 @@ namespace Droute.Installer.Classes
             }
         }
 
+        public void Reset()
+        {
+            try
+            {
+                Registry.CurrentUser.DeleteSubKeyTree(REGISTRY_PATH, throwOnMissingSubKey: false);
+
+                Host = "127.0.0.1";
+                Port = 1080;
+                User = string.Empty;
+                Password = string.Empty;
+                ConnectTimeout = 5000;
+                ReconnectInterval = 3000;
+                LogLevel = LogLevelValue.Info;
+
+                Normalize();
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine($"error during reset configuration: {ex.ToString()}");
+            }
+        }
+
         private void Normalize()
         {
             Host = string.IsNullOrWhiteSpace(Host) ? "127.0.0.1" : Host.Trim();
