@@ -1,14 +1,37 @@
 # Discord Droute (Native Proxy for Discord)
 
+<p align="center">
+  <img src="external/droute.svg" alt="Droute Logo" width="128">
+</p>
+
+<p align="center">
+  <a href="https://github.com/snowluwu/droute/releases"><img src="https://img.shields.io/github/v/release/snowluwu/droute?style=for-the-badge&label=Release&labelColor=3A3A3A&color=5662f6" alt="Release"></a>
+</p>
+
 **Droute** is a tool that adds SOCKS5 proxy support directly into the Discord Windows client. It fixes the lack of built-in proxy settings in Discord, so you don't have to mess with TUN interfaces or full-system VPNs.
 
 The project is inspired by the [force-proxy](https://github.com/runetfreedom/force-proxy) concept and uses the [MinHook](https://github.com/tsudakageyu/minhook) library.
 
-> [!WARNING]
+> [!NOTE]
 > **Droute is not a standalone tool for bypassing censorship or blocks.** 
 > It requires an existing SOCKS5 proxy to function. You must provide your own proxy server or run a local client like **FlClash, v2rayN, Nekobox, or Amnezia**. Droute only handles the routing part inside Discord.
 
+## Screenshots
+<details>
+<summary>Installer previews</summary>
+<br>
 <img width="451" height="415" alt="image" src="https://github.com/user-attachments/assets/11509cf4-1a11-4744-92e6-d340c49de6cd" />
+<br>
+<img width="581" height="449" alt="image" src="https://github.com/user-attachments/assets/9cc70f54-c621-4ebd-8931-15ec48f4d8ea" />
+</details>
+
+<details>
+<summary>CLI Previews</summary>
+<br>
+<img width="1113" height="626" alt="image" src="https://github.com/user-attachments/assets/3fa1e04f-7364-4a81-9a38-c653502fac12" />
+<br>
+<img width="1113" height="721" alt="image" src="https://github.com/user-attachments/assets/ef23cfba-913a-4e82-85b0-7c15139aff55" />
+</details>
 
 ---
 
@@ -24,9 +47,22 @@ The project is inspired by the [force-proxy](https://github.com/runetfreedom/for
 
 ## Installation
 
+### Installer Mode
 1. Download the latest release from the [releases page](https://github.com/snowluwu/droute/releases/latest).
 2. Open `droute.exe`, enter your SOCKS5 proxy details, and choose your Discord build.
-3. Click apply to install the patch.
+3. Click **Apply** to save the configuration, then click **Install** to apply the patch.
+
+### CLI Mode
+To install via the command line, run the following command:
+```bash
+.\droute.exe -i --branch stable --host 127.0.0.1 --port 1080
+```
+If you need help or want to see all available options, run:
+```bash
+.\droute.exe --help
+```
+> [!WARNING]
+> CLI Mode will not automatically close Discord. You must close Discord manually before running the command so the installer can apply the patch.
 
 ---
 
