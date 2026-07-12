@@ -108,7 +108,11 @@ namespace Droute.UpdaterHook
                 proxyStagedPath = proxyPath + stagingSuffix;
                 drouteStagedPath = droutePath + stagingSuffix;
 
-                // TODO: add check for the existence of a patch to avoid unnecessary actions (maybe ¯\_(ツ)_/¯) 
+                if (File.Exists(proxyPath) && File.Exists(droutePath)) 
+                {
+                    Logger.Info("patch already been applied, skip installation.");
+                    return true;
+                }
 
                 Logger.Info($"duplicating {PatchManager.MAIN_PROXY_DLL} to: {proxyPath}");
 
@@ -141,24 +145,11 @@ namespace Droute.UpdaterHook
             }
             finally
             {
-                DeleteStagedFile(proxyStagedPath);
-                DeleteStagedFile(drouteStagedPath);
+                PatchManager.DeleteStagedFile(proxyStagedPath);
+                PatchManager.DeleteStagedFile(drouteStagedPath);
             }
 
             return true;
-        }
-
-        private static void DeleteStagedFile(string path)
-        {
-            if (string.IsNullOrEmpty(path))
-                return;
-
-            try
-            {
-                if (File.Exists(path))
-                    File.Delete(path);
-            }
-            catch { }
         }
     }
 }
