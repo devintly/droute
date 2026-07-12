@@ -10,6 +10,7 @@
 			<InputAssemblies Include="$(OutputPath)AsmResolver.PE.File.dll" />
 			<InputAssemblies Include="$(OutputPath)MonoMod.Backports.dll" />
 			<InputAssemblies Include="$(OutputPath)MonoMod.ILHelpers.dll" />
+			<InputAssemblies Include="$(OutputPath)CommandLine.dll" />
 		</ItemGroup>
 
         <ILRepack
