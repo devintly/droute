@@ -173,7 +173,7 @@ namespace Droute.Installer.Forms
         {
             try
             {
-                if (DiscordManager.Close(branch))
+                if (DiscordTools.CloseAndWait(branch))
                     return true;
 
                 MessageBox.Show("Discord did not exit in time. Close it manually and try again.",
