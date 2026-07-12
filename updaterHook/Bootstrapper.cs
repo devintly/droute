@@ -76,13 +76,19 @@ namespace Droute.UpdaterHook
         {
             Logger.Trace($"ProcessStart triggered: exeName=\"{exeName}\", args=\"{arguments}\", wait={shouldWait}");
 
+            string branchRoot = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            if (!IsTargetDiscordExecutable(branchRoot, exeName))
+            {
+                Logger.Debug($"skipping non-Discord process: {exeName}");
+                return true;
+            }
+
             // staged paths: .droute.[Guid].tmp
             string proxyStagedPath = null;
             string drouteStagedPath = null;
 
             try
             {
-                string branchRoot = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
                 if (string.IsNullOrEmpty(branchRoot))
                 {
                     Logger.Error("AppContext.BaseDirectory returned null or empty");
@@ -108,7 +114,11 @@ namespace Droute.UpdaterHook
                 proxyStagedPath = proxyPath + stagingSuffix;
                 drouteStagedPath = droutePath + stagingSuffix;
 
-                // TODO: add check for the existence of a patch to avoid unnecessary actions (maybe ¯\_(ツ)_/¯) 
+                if (File.Exists(proxyPath) && File.Exists(droutePath)) 
+                {
+                    Logger.Info("patch already been applied, skip installation.");
+                    return true;
+                }
 
                 Logger.Info($"duplicating {PatchManager.MAIN_PROXY_DLL} to: {proxyPath}");
 
@@ -141,24 +151,34 @@ namespace Droute.UpdaterHook
             }
             finally
             {
-                DeleteStagedFile(proxyStagedPath);
-                DeleteStagedFile(drouteStagedPath);
+                PatchManager.DeleteStagedFile(proxyStagedPath);
+                PatchManager.DeleteStagedFile(drouteStagedPath);
             }
 
             return true;
         }
 
-        private static void DeleteStagedFile(string path)
+        private static bool IsTargetDiscordExecutable(string branchRoot, string exeName)
         {
-            if (string.IsNullOrEmpty(path))
-                return;
+            if (string.IsNullOrEmpty(branchRoot) || string.IsNullOrWhiteSpace(exeName))
+                return false;
 
-            try
-            {
-                if (File.Exists(path))
-                    File.Delete(path);
-            }
-            catch { }
+            string branchName = Path.GetFileName(branchRoot.TrimEnd(
+                Path.DirectorySeparatorChar,
+                Path.AltDirectorySeparatorChar));
+
+            string expectedExecutable;
+            if (branchName.Equals("Discord", StringComparison.OrdinalIgnoreCase))
+                expectedExecutable = "Discord.exe";
+            else if (branchName.Equals("DiscordCanary", StringComparison.OrdinalIgnoreCase))
+                expectedExecutable = "DiscordCanary.exe";
+            else if (branchName.Equals("DiscordPTB", StringComparison.OrdinalIgnoreCase))
+                expectedExecutable = "DiscordPTB.exe";
+            else
+                return false;
+
+            string executableName = Path.GetFileName(exeName.Trim().Trim('"'));
+            return expectedExecutable.Equals(executableName, StringComparison.OrdinalIgnoreCase);
         }
     }
 }
