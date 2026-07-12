@@ -5,7 +5,7 @@ namespace Droute.UpdaterHook
 {
     public static class Logger
     {
-        private static readonly string _logPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "droute.log");
+        private static readonly string _logPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "updaterHook.log");
         private static readonly object _lock = new object();
 
         static Logger()
