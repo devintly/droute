@@ -78,5 +78,31 @@ namespace Droute.Core
             if (File.Exists(filePath))
                 File.Delete(filePath);
         }
+
+        public static void PublishStagedFile(string stagedPath, string destinationPath)
+        {
+            if (string.IsNullOrEmpty(stagedPath))
+                throw new ArgumentException("Staged file path is required.", nameof(stagedPath));
+
+            if (string.IsNullOrEmpty(destinationPath))
+                throw new ArgumentException("Destination file path is required.", nameof(destinationPath));
+
+            if (!File.Exists(stagedPath))
+                throw new FileNotFoundException("Staged file was not created.", stagedPath);
+
+            if (File.Exists(destinationPath))
+                File.Replace(stagedPath, destinationPath, null, true);
+            else
+                File.Move(stagedPath, destinationPath);
+        }
+
+        public static void DeleteStagedFile(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+                return;
+
+            try { if (File.Exists(path)) File.Delete(path); }
+            catch { }
+        }
     }
 }
