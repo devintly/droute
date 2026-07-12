@@ -1,4 +1,5 @@
 name: Build and Release
+run-name: Release ${{ github.ref_name }}
 
 on:
   push:
@@ -66,13 +67,20 @@ jobs:
             Write-Output "Droute.UpdaterHook.dll: $($hook.Length) bytes"
           }
 
+          $updaterConfig = "installer\Resources\Update.exe.config"
+          if (!(Test-Path $updaterConfig)) {
+            $errors += "Update.exe.config not found in installer\Resources"
+          } else {
+            Write-Output "Update.exe.config: $((Get-Item $updaterConfig).Length) bytes"
+          }
+
           if ($errors.Count -gt 0) {
             foreach ($e in $errors) { Write-Error $e }
             exit 1
           }
           Write-Output "All build outputs verified."
 
-      - name: Prepare release archive
+      - name: Prepare release archives
         shell: pwsh
         run: |
           $outDir = "release"
@@ -91,11 +99,23 @@ jobs:
           Compress-Archive -Path "$outDir\*" -DestinationPath $zipName -Force
           Write-Output "Created archive: $zipName"
 
+          $libsDir = "release-libs"
+          New-Item -ItemType Directory -Force -Path $libsDir | Out-Null
+          Copy-Item "installer\Resources\Update.exe.config" -Destination "$libsDir\Update.exe.config"
+          Copy-Item "installer\Resources\Droute.UpdaterHook.dll" -Destination "$libsDir\Droute.UpdaterHook.dll"
+          Copy-Item "installer\Resources\droute_64.dll" -Destination "$libsDir\droute.dll"
+
+          $libsZipName = "droute-libs.zip"
+          Compress-Archive -Path "$libsDir\*" -DestinationPath $libsZipName -Force
+          Write-Output "Created archive: $libsZipName"
+
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: droute-build
           path: droute-*.zip
+          if-no-files-found: error
+          compression-level: 0
 
       - name: Create GitHub Release
         if: startsWith(github.ref, 'refs/tags/')
