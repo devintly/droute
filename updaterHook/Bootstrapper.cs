@@ -76,6 +76,10 @@ namespace Droute.UpdaterHook
         {
             Logger.Trace($"ProcessStart triggered: exeName=\"{exeName}\", args=\"{arguments}\", wait={shouldWait}");
 
+            // staged paths: .droute.[Guid].tmp
+            string proxyStagedPath = null;
+            string drouteStagedPath = null;
+
             try
             {
                 string branchRoot = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -99,17 +103,34 @@ namespace Droute.UpdaterHook
                 string proxyPath = Path.Combine(appDirectory, PatchManager.MAIN_PROXY_DLL);
                 string droutePath = Path.Combine(appDirectory, "droute.dll");
 
+                // make staged paths
+                string stagingSuffix = $".droute.{Guid.NewGuid():N}.tmp";
+                proxyStagedPath = proxyPath + stagingSuffix;
+                drouteStagedPath = droutePath + stagingSuffix;
+
                 // TODO: add check for the existence of a patch to avoid unnecessary actions (maybe ¯\_(ツ)_/¯) 
 
                 Logger.Info($"duplicating {PatchManager.MAIN_PROXY_DLL} to: {proxyPath}");
 
-                PatchManager.DuplicateProxy(proxyPath);
+                // duplicate version.dll to version.{stagingSuffix}
+                PatchManager.DuplicateProxy(proxyStagedPath);
 
+                // apply patch for version.dll.{stagingSuffix}
                 Logger.Info("applying PE patch...");
-                PatchManager.ApplyPEPatch(proxyPath);
+                PatchManager.ApplyPEPatch(proxyStagedPath);
 
-                Logger.Info("writing droute.dll payload...");
-                File.WriteAllBytes(droutePath, Properties.Resources.Droute64);
+                // write main payload to droute.dll.{stagingSuffix}
+                Logger.Info("preparing droute.dll payload...");
+                File.WriteAllBytes(drouteStagedPath, Properties.Resources.Droute64);
+
+                // publish droute.dll (remove staging suffix)
+                Logger.Info("publishing prepared patch files...");
+                PatchManager.PublishStagedFile(drouteStagedPath, droutePath);
+                drouteStagedPath = null;
+
+                // publish version.dll
+                PatchManager.PublishStagedFile(proxyStagedPath, proxyPath);
+                proxyStagedPath = null;
 
                 Logger.Debug("patching completed successfully!");
             }
@@ -118,8 +139,26 @@ namespace Droute.UpdaterHook
                 Logger.Error($"unexpected exception in MyProcessStart: {ex.Message}");
                 Logger.Trace($"stack trace: {ex.StackTrace}");
             }
+            finally
+            {
+                DeleteStagedFile(proxyStagedPath);
+                DeleteStagedFile(drouteStagedPath);
+            }
 
             return true;
+        }
+
+        private static void DeleteStagedFile(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+                return;
+
+            try
+            {
+                if (File.Exists(path))
+                    File.Delete(path);
+            }
+            catch { }
         }
     }
 }
