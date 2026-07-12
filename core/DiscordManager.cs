@@ -111,9 +111,17 @@ namespace Droute.Core
         public static bool IsDiscordRunning(Branches branch) 
         {
             string processName = GetDiscordProcessName(branch);
-            if (Process.GetProcessesByName(processName).Length > 0)
-                return true;
-            return false;
+            var processes = Process.GetProcessesByName(processName);
+
+            try
+            {
+                return processes.Length > 0;
+            }
+            finally
+            {
+                foreach (var process in processes)
+                    process.Dispose();
+            }
         }
 
         public static void Close(Branches branch)
@@ -123,12 +131,18 @@ namespace Droute.Core
 
             foreach (var process in processes)
             {
-                try
+                using (process)
                 {
-                    process.Kill();
-                    process.WaitForExit(3000);
+                    try
+                    {
+                        if (!process.HasExited)
+                            process.Kill();
+                    }
+                    catch (Exception ex)
+                    {
+                        Trace.WriteLine($"error while closing {processName}: {ex}");
+                    }
                 }
-                catch { }
             }
         }
 
