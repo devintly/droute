@@ -86,7 +86,6 @@ namespace Droute.UpdaterHook
             // staged paths: .droute.[Guid].tmp
             string proxyStagedPath = null;
             string drouteStagedPath = null;
-            IDisposable operationLock = null;
 
             try
             {
@@ -95,8 +94,6 @@ namespace Droute.UpdaterHook
                     Logger.Error("AppContext.BaseDirectory returned null or empty");
                     return true;
                 }
-
-                operationLock = PatchManager.AcquireOperationLock(branchRoot);
 
                 Logger.Debug($"resolving last version path from: {branchRoot}");
                 string appDirectory = DiscordManager.GetLastVersionPath(branchRoot);
@@ -156,7 +153,6 @@ namespace Droute.UpdaterHook
             {
                 PatchManager.DeleteStagedFile(proxyStagedPath);
                 PatchManager.DeleteStagedFile(drouteStagedPath);
-                operationLock?.Dispose();
             }
 
             return true;
