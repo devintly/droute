@@ -13,8 +13,6 @@ namespace Droute.Installer.Forms
         public bool IsSuccessful { get; private set; }
         public DiscordManager.Branches SelectedBranch { get; set; } = DiscordManager.Branches.Stable;
 
-        public event Action OnSuccess;
-
         private bool _isWorking = false;
         private readonly PatchAction _action;
 
@@ -26,7 +24,6 @@ namespace Droute.Installer.Forms
             this.SelectedBranch = branch;
 
             this.Text = _action == PatchAction.Install ? "Droute: Installing Patch..." : "Droute: Removing Patch...";
-            this.ControlBox = true;
         }
 
         private async void FrmPatch_Shown(object sender, EventArgs e)
@@ -37,6 +34,7 @@ namespace Droute.Installer.Forms
         private async Task ExecutePatchOperation()
         {
             _isWorking = true;
+
             ClearJournal();
             UpdateProgress(0);
 
@@ -55,16 +53,17 @@ namespace Droute.Installer.Forms
                 WriteJournal($"Error: {ex.Message}");
                 IsSuccessful = false;
             }
-
-            PatchTools.OnLog -= WriteJournal;
-            PatchTools.OnProgressChanged -= UpdateProgress;
-            _isWorking = false;
+            finally
+            {
+                PatchTools.OnLog -= WriteJournal;
+                PatchTools.OnProgressChanged -= UpdateProgress;
+                _isWorking = false;
+            }
 
             if (IsSuccessful)
             {
                 this.Text = "Droute: Operation completed!";
                 WriteJournal("Done! You can now close this window.");
-                OnSuccess?.Invoke();
             }
             else
             {
@@ -76,16 +75,7 @@ namespace Droute.Installer.Forms
         private void FrmPatch_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (_isWorking)
-            {
-                var result = MessageBox.Show(
-                    "The patch has not been finalized yet. Do you want to interrupt the process? You will need to install/uninstall the patch completely to work correctly.",
-                    "Abort the patch?", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-
-                if (result == DialogResult.No)
-                    e.Cancel = true;
-                else
-                    _isWorking = false;
-            }
+                e.Cancel = true;
         }
 
         public void WriteJournal(string content)
