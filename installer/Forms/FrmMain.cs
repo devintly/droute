@@ -72,6 +72,8 @@ namespace Droute.Installer.Forms
 
             if (restartDiscord)
                 this.RestartDiscord(_selectedBranch);
+
+            MessageBox.Show("Config has been applied!", "Droute: apply changes", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void discordActionsCheckbox_CheckedChanged(object sender, EventArgs e)
@@ -198,6 +200,23 @@ namespace Droute.Installer.Forms
             {
                 Trace.WriteLine($"error during Discord launch: {ex.ToString()}");
                 MessageBox.Show(ex.Message, "Unable to launch Discord", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void resetCfgBtn_Click(object sender, EventArgs e)
+        {
+            DialogResult result = MessageBox.Show
+            (
+                "Droute settings will be deleted from registry. At the same time, patch itself will not be affected.", 
+                "Are you sure?", 
+                MessageBoxButtons.YesNo, 
+                MessageBoxIcon.Warning
+            );
+
+            if (result == DialogResult.Yes)
+            {
+                _cfg.Reset();
+                Application.Restart();
             }
         }
     }
