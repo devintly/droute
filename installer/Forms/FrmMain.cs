@@ -136,13 +136,10 @@ namespace Droute.Installer.Forms
 
             using (var frm = new FrmPatch(action, _selectedBranch))
             {
-                frm.OnSuccess += () =>
-                {
-                    if (restartDiscord)
-                        this.LaunchDiscord(_selectedBranch);
-                };
-
                 frm.ShowDialog();
+
+                if (restartDiscord)
+                    this.LaunchDiscord(_selectedBranch);
             }
         }
 
