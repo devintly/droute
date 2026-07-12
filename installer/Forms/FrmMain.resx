@@ -128,7 +128,7 @@
     <value>Discord</value>
   </data>
   <data name="&gt;&gt;applyCfgButton.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>1</value>
   </data>
   <data name="&gt;&gt;groupBox2.Parent" xml:space="preserve">
     <value>tabPage1</value>
@@ -145,10 +145,14 @@
   <data name="autoRestartPatchCheckbox.Text" xml:space="preserve">
     <value>Automatically restart or close Discord</value>
   </data>
-  <data name="&gt;&gt;licenseLink.ZOrder" xml:space="preserve">
-    <value>1</value>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="label2.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Right</value>
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="label10.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
   <data name="label8.TabIndex" type="System.Int32, mscorlib">
     <value>5</value>
   </data>
@@ -164,9 +168,6 @@
   <data name="&gt;&gt;groupBox1.Parent" xml:space="preserve">
     <value>tabPage1</value>
   </data>
-  <data name="&gt;&gt;removePatchButton.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
   <data name="passwordTextBox.Size" type="System.Drawing.Size, System.Drawing">
     <value>328, 20</value>
   </data>
@@ -177,7 +178,7 @@
     <value>1</value>
   </data>
   <data name="applyCfgButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 126</value>
+    <value>147, 127</value>
   </data>
   <data name="tabPage1.Size" type="System.Drawing.Size, System.Drawing">
     <value>425, 346</value>
@@ -187,9 +188,6 @@
   </data>
   <data name="label8.Size" type="System.Drawing.Size, System.Drawing">
     <value>68, 20</value>
-  </data>
-  <data name="&gt;&gt;label8.Name" xml:space="preserve">
-    <value>label8</value>
   </data>
   <data name="&gt;&gt;openLogsButton.ZOrder" xml:space="preserve">
     <value>0</value>
@@ -209,16 +207,12 @@
   <data name="&gt;&gt;tabControl.Type" xml:space="preserve">
     <value>System.Windows.Forms.TabControl, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;label6.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="label1.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
   <data name="autoRestartPatchCheckbox.Location" type="System.Drawing.Point, System.Drawing">
     <value>6, 19</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="hostTextBox.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
   </data>
@@ -227,6 +221,12 @@
   </data>
   <data name="userTextBox.TabIndex" type="System.Int32, mscorlib">
     <value>9</value>
+  </data>
+  <data name="hostTextBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>47, 18</value>
+  </data>
+  <data name="autoRestartPatchCheckbox.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
   </data>
   <data name="&gt;&gt;openLogsButton.Parent" xml:space="preserve">
     <value>tabPage1</value>
@@ -252,8 +252,8 @@
   <data name="autoRestartPatchCheckbox.Size" type="System.Drawing.Size, System.Drawing">
     <value>199, 17</value>
   </data>
-  <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>32, 13</value>
+  <data name="applyCfgButton.TabIndex" type="System.Int32, mscorlib">
+    <value>14</value>
   </data>
   <data name="label10.Location" type="System.Drawing.Point, System.Drawing">
     <value>3, 157</value>
@@ -272,6 +272,9 @@
   </data>
   <data name="&gt;&gt;groupBox1.Name" xml:space="preserve">
     <value>groupBox1</value>
+  </data>
+  <data name="&gt;&gt;label2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="branchesComboBox.TabIndex" type="System.Int32, mscorlib">
     <value>5</value>
@@ -295,16 +298,13 @@
     <value>tabPage2</value>
   </data>
   <data name="&gt;&gt;authPanel.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
   </data>
   <data name="openLogsButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
   </data>
   <data name="inspiredLink.Location" type="System.Drawing.Point, System.Drawing">
     <value>82, 137</value>
-  </data>
-  <data name="tabControl.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
   </data>
   <data name="label4.TabIndex" type="System.Int32, mscorlib">
     <value>12</value>
@@ -314,6 +314,9 @@
   </data>
   <data name="&gt;&gt;passwordTextBox.ZOrder" xml:space="preserve">
     <value>0</value>
+  </data>
+  <data name="resetCfgBtn.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 127</value>
   </data>
   <data name="&gt;&gt;hostTextBox.Name" xml:space="preserve">
     <value>hostTextBox</value>
@@ -330,8 +333,8 @@
   <data name="&gt;&gt;hostTextBox.Type" xml:space="preserve">
     <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="label11.TabIndex" type="System.Int32, mscorlib">
-    <value>10</value>
+  <data name="&gt;&gt;branchesComboBox.Parent" xml:space="preserve">
+    <value>groupBox2</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
     <value>449, 388</value>
@@ -339,11 +342,8 @@
   <data name="&gt;&gt;authCheckBox.Parent" xml:space="preserve">
     <value>groupBox1</value>
   </data>
-  <data name="applyCfgButton.TabIndex" type="System.Int32, mscorlib">
-    <value>14</value>
-  </data>
-  <data name="&gt;&gt;label9.ZOrder" xml:space="preserve">
-    <value>7</value>
+  <data name="&gt;&gt;licenseLink.ZOrder" xml:space="preserve">
+    <value>1</value>
   </data>
   <data name="&gt;&gt;repoLink.ZOrder" xml:space="preserve">
     <value>2</value>
@@ -355,7 +355,7 @@
     <value>2</value>
   </data>
   <data name="&gt;&gt;authCheckBox.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>6</value>
   </data>
   <data name="licenseLink.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -390,8 +390,8 @@
   <data name="authPanel.Location" type="System.Drawing.Point, System.Drawing">
     <value>6, 70</value>
   </data>
-  <data name="&gt;&gt;portNumeric.Name" xml:space="preserve">
-    <value>portNumeric</value>
+  <data name="&gt;&gt;resetCfgBtn.Parent" xml:space="preserve">
+    <value>groupBox1</value>
   </data>
   <data name="removePatchButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
@@ -414,6 +414,9 @@
   <data name="portNumeric.Size" type="System.Drawing.Size, System.Drawing">
     <value>62, 20</value>
   </data>
+  <data name="&gt;&gt;resetCfgBtn.Name" xml:space="preserve">
+    <value>resetCfgBtn</value>
+  </data>
   <data name="openLogsButton.Text" xml:space="preserve">
     <value>Open logs</value>
   </data>
@@ -422,6 +425,9 @@
   </data>
   <data name="&gt;&gt;label6.Parent" xml:space="preserve">
     <value>groupBox2</value>
+  </data>
+  <data name="label7.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Segoe UI, 9.75pt</value>
   </data>
   <data name="removePatchButton.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -435,8 +441,8 @@
   <data name="repoLink.Location" type="System.Drawing.Point, System.Drawing">
     <value>45, 161</value>
   </data>
-  <data name="&gt;&gt;repoLink.Name" xml:space="preserve">
-    <value>repoLink</value>
+  <data name="groupBox2.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 171</value>
   </data>
   <data name="&gt;&gt;authCheckBox.Name" xml:space="preserve">
     <value>authCheckBox</value>
@@ -449,6 +455,9 @@
   </data>
   <data name="&gt;&gt;installPatchButton.Name" xml:space="preserve">
     <value>installPatchButton</value>
+  </data>
+  <data name="$this.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>8, 8, 8, 8</value>
   </data>
   <data name="label9.Text" xml:space="preserve">
     <value>Created by:</value>
@@ -465,17 +474,23 @@
   <data name="&gt;&gt;label11.ZOrder" xml:space="preserve">
     <value>4</value>
   </data>
-  <data name="&gt;&gt;label5.Parent" xml:space="preserve">
-    <value>tabPage2</value>
+  <data name="&gt;&gt;tabPage1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;portNumeric.Type" xml:space="preserve">
     <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label5.Parent" xml:space="preserve">
+    <value>tabPage2</value>
   </data>
   <data name="&gt;&gt;passwordTextBox.Parent" xml:space="preserve">
     <value>authPanel</value>
   </data>
   <data name="autoRestartConfigCheckbox.Text" xml:space="preserve">
     <value>Restart Discord on Config change</value>
+  </data>
+  <data name="&gt;&gt;resetCfgBtn.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
   <data name="portNumeric.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
@@ -519,11 +534,14 @@
   <data name="pictureBox1.Size" type="System.Drawing.Size, System.Drawing">
     <value>95, 90</value>
   </data>
+  <data name="&gt;&gt;repoLink.Name" xml:space="preserve">
+    <value>repoLink</value>
+  </data>
   <data name="label4.Text" xml:space="preserve">
     <value>Password: </value>
   </data>
-  <data name="&gt;&gt;label9.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="passwordTextBox.TabIndex" type="System.Int32, mscorlib">
+    <value>11</value>
   </data>
   <data name="&gt;&gt;installPatchButton.Type" xml:space="preserve">
     <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -546,6 +564,9 @@
   <data name="&gt;&gt;tabPage2.Type" xml:space="preserve">
     <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;removePatchButton.Name" xml:space="preserve">
+    <value>removePatchButton</value>
+  </data>
   <data name="&gt;&gt;label5.Name" xml:space="preserve">
     <value>label5</value>
   </data>
@@ -558,11 +579,14 @@
   <data name="&gt;&gt;label5.ZOrder" xml:space="preserve">
     <value>10</value>
   </data>
-  <data name="autoRestartPatchCheckbox.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
+  <data name="label7.Text" xml:space="preserve">
+    <value>Native proxy integration in Discord. Redirects all application traffic to SOCKS5 proxy.</value>
   </data>
   <data name="userTextBox.Size" type="System.Drawing.Size, System.Drawing">
     <value>328, 20</value>
+  </data>
+  <data name="&gt;&gt;groupBox1.ZOrder" xml:space="preserve">
+    <value>4</value>
   </data>
   <data name="groupBox1.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
@@ -570,14 +594,17 @@
   <data name="tabPage1.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
+  <data name="resetCfgBtn.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
   <data name="&gt;&gt;tabPage1.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
   <data name="&gt;&gt;label8.Type" xml:space="preserve">
     <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="$this.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>8, 8, 8, 8</value>
+  <data name="versionLabel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
   </data>
   <data name="label7.Location" type="System.Drawing.Point, System.Drawing">
     <value>105, 42</value>
@@ -594,8 +621,8 @@
   <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
     <value>35, 13</value>
   </data>
-  <data name="&gt;&gt;userTextBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="tabControl.Location" type="System.Drawing.Point, System.Drawing">
+    <value>8, 8</value>
   </data>
   <data name="&gt;&gt;installPatchButton.ZOrder" xml:space="preserve">
     <value>2</value>
@@ -609,23 +636,29 @@
   <data name="&gt;&gt;licenseLink.Parent" xml:space="preserve">
     <value>tabPage2</value>
   </data>
-  <data name="&gt;&gt;$this.Name" xml:space="preserve">
-    <value>FrmMain</value>
-  </data>
   <data name="versionLabel.Location" type="System.Drawing.Point, System.Drawing">
     <value>377, 89</value>
   </data>
-  <data name="label9.Size" type="System.Drawing.Size, System.Drawing">
-    <value>79, 20</value>
+  <data name="&gt;&gt;label6.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="applyCfgButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>397, 26</value>
+    <value>256, 26</value>
   </data>
   <data name="portNumeric.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
   </data>
+  <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>32, 13</value>
+  </data>
+  <data name="&gt;&gt;autoRestartConfigCheckbox.Parent" xml:space="preserve">
+    <value>groupBox2</value>
+  </data>
   <data name="installPatchButton.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
+  </data>
+  <data name="&gt;&gt;resetCfgBtn.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="applyCfgButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
@@ -637,13 +670,10 @@
     <value>Links:</value>
   </data>
   <data name="&gt;&gt;hostTextBox.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>5</value>
   </data>
   <data name="&gt;&gt;autoRestartPatchCheckbox.Name" xml:space="preserve">
     <value>autoRestartPatchCheckbox</value>
-  </data>
-  <data name="label10.TabIndex" type="System.Int32, mscorlib">
-    <value>9</value>
   </data>
   <data name="&gt;&gt;label8.ZOrder" xml:space="preserve">
     <value>6</value>
@@ -669,16 +699,10 @@
   <data name="groupBox1.Location" type="System.Drawing.Point, System.Drawing">
     <value>6, 6</value>
   </data>
-  <data name="&gt;&gt;tabPage1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="&gt;&gt;label10.Parent" xml:space="preserve">
     <value>tabPage2</value>
   </data>
   <data name="&gt;&gt;groupBox2.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
     <value>3</value>
   </data>
   <data name="installPatchButton.Text" xml:space="preserve">
@@ -690,9 +714,6 @@
   <data name="installPatchButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>204, 36</value>
   </data>
-  <data name="label10.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleLeft</value>
-  </data>
   <data name="&gt;&gt;authPanel.Parent" xml:space="preserve">
     <value>groupBox1</value>
   </data>
@@ -701,9 +722,6 @@
   </data>
   <data name="&gt;&gt;label3.Type" xml:space="preserve">
     <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="versionLabel.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
   </data>
   <data name="&gt;&gt;label10.ZOrder" xml:space="preserve">
     <value>5</value>
@@ -726,7 +744,7 @@
   <data name="pictureBox1.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAL
-        DgAACw4BQL7hQQAAAA50RVh0U29mdHdhcmUARmlnbWGesZZjAAAiQklEQVR4Xu3dv28c17k3cP8JAkSa
+        DAAACwwBP0AiyAAAAA50RVh0U29mdHdhcmUARmlnbWGesZZjAAAiQklEQVR4Xu3dv28c17k3cP8JAkSa
         yzc2rhVABhRDiQU7gXUBa8cCbCNyEAuGY+QW+eHU15BLdb6A3TN1Uug2Tmv4rW2oVafC6dknhbq35Yuz
         8krUM6R4SO7Ozpznc4BPY5Ly7sz58Z0zZ8688IKylnJh1r2yvd29vj3r/ry9293Z2un2tmfdve1Zd397
         Z/7wxVm3X2zvzh9tz+YHAKnszh896QdLv/jYvUVfudvdufhid3tr1nUXLnQXYv+qKKMoZaAvFbVU2MUA
@@ -882,14 +900,17 @@
   <data name="&gt;&gt;inspiredLink.ZOrder" xml:space="preserve">
     <value>3</value>
   </data>
+  <data name="label11.TabIndex" type="System.Int32, mscorlib">
+    <value>10</value>
+  </data>
   <data name="authPanel.TabIndex" type="System.Int32, mscorlib">
     <value>5</value>
   </data>
-  <data name="&gt;&gt;branchesComboBox.Parent" xml:space="preserve">
-    <value>groupBox2</value>
-  </data>
   <data name="&gt;&gt;versionLabel.ZOrder" xml:space="preserve">
     <value>0</value>
+  </data>
+  <data name="branchesComboBox.Text" xml:space="preserve">
+    <value>Stable</value>
   </data>
   <data name="pictureBox1.SizeMode" type="System.Windows.Forms.PictureBoxSizeMode, System.Windows.Forms">
     <value>Zoom</value>
@@ -907,7 +928,7 @@
     <value>tabPage2</value>
   </data>
   <data name="&gt;&gt;portNumeric.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>3</value>
   </data>
   <data name="&gt;&gt;licenseLink.Name" xml:space="preserve">
     <value>licenseLink</value>
@@ -915,14 +936,14 @@
   <data name="&gt;&gt;installPatchButton.Parent" xml:space="preserve">
     <value>tabPage1</value>
   </data>
-  <data name="&gt;&gt;label2.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+    <value>FrmMain</value>
   </data>
   <data name="&gt;&gt;label4.Type" xml:space="preserve">
     <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
-    <value>6</value>
+    <value>7</value>
   </data>
   <data name="&gt;&gt;autoRestartConfigCheckbox.Type" xml:space="preserve">
     <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -1063,14 +1084,17 @@
   <data name="&gt;&gt;userTextBox.Parent" xml:space="preserve">
     <value>authPanel</value>
   </data>
+  <data name="&gt;&gt;passwordTextBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;tabPage1.Parent" xml:space="preserve">
     <value>tabControl</value>
   </data>
   <data name="licenseLink.TabIndex" type="System.Int32, mscorlib">
     <value>8</value>
   </data>
-  <data name="&gt;&gt;autoRestartConfigCheckbox.Parent" xml:space="preserve">
-    <value>groupBox2</value>
+  <data name="&gt;&gt;portNumeric.Name" xml:space="preserve">
+    <value>portNumeric</value>
   </data>
   <data name="autoRestartConfigCheckbox.Location" type="System.Drawing.Point, System.Drawing">
     <value>6, 44</value>
@@ -1084,14 +1108,23 @@
   <data name="tabPage1.Location" type="System.Drawing.Point, System.Drawing">
     <value>4, 22</value>
   </data>
+  <data name="resetCfgBtn.Size" type="System.Drawing.Size, System.Drawing">
+    <value>135, 26</value>
+  </data>
   <data name="&gt;&gt;label11.Type" xml:space="preserve">
     <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="label10.Size" type="System.Drawing.Size, System.Drawing">
     <value>46, 20</value>
   </data>
+  <data name="label9.Size" type="System.Drawing.Size, System.Drawing">
+    <value>79, 20</value>
+  </data>
   <data name="portNumeric.Location" type="System.Drawing.Point, System.Drawing">
     <value>339, 19</value>
+  </data>
+  <data name="&gt;&gt;userTextBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="label8.Location" type="System.Drawing.Point, System.Drawing">
     <value>81, 109</value>
@@ -1101,6 +1134,9 @@
   </data>
   <data name="authCheckBox.Text" xml:space="preserve">
     <value>Authentication</value>
+  </data>
+  <data name="resetCfgBtn.TabIndex" type="System.Int32, mscorlib">
+    <value>15</value>
   </data>
   <data name="branchesComboBox.Items2" xml:space="preserve">
     <value>PTB</value>
@@ -1120,8 +1156,8 @@
   <data name="&gt;&gt;branchesComboBox.Type" xml:space="preserve">
     <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="label7.Text" xml:space="preserve">
-    <value>Native proxy integration in Discord. Redirects all application traffic to SOCKS5 proxy.</value>
+  <data name="resetCfgBtn.Text" xml:space="preserve">
+    <value>Reset</value>
   </data>
   <data name="label1.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -1153,8 +1189,8 @@
   <data name="&gt;&gt;versionLabel.Type" xml:space="preserve">
     <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="passwordTextBox.TabIndex" type="System.Int32, mscorlib">
-    <value>11</value>
+  <data name="passwordTextBox.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Left, Right</value>
   </data>
   <data name="label11.Text" xml:space="preserve">
     <value>Inspired by:</value>
@@ -1171,9 +1207,6 @@
   <data name="&gt;&gt;label2.Parent" xml:space="preserve">
     <value>groupBox1</value>
   </data>
-  <data name="groupBox2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>409, 97</value>
-  </data>
   <data name="tabPage2.Size" type="System.Drawing.Size, System.Drawing">
     <value>425, 346</value>
   </data>
@@ -1183,14 +1216,14 @@
   <data name="label4.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <data name="&gt;&gt;openLogsButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;label9.ZOrder" xml:space="preserve">
+    <value>7</value>
   </data>
   <data name="hostTextBox.Size" type="System.Drawing.Size, System.Drawing">
     <value>256, 20</value>
   </data>
-  <data name="label11.Size" type="System.Drawing.Size, System.Drawing">
-    <value>79, 20</value>
+  <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
+    <value>4</value>
   </data>
   <data name="openLogsButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>413, 26</value>
@@ -1203,9 +1236,6 @@
   </data>
   <data name="pictureBox1.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
-  </data>
-  <data name="passwordTextBox.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Left, Right</value>
   </data>
   <data name="&gt;&gt;label2.Name" xml:space="preserve">
     <value>label2</value>
@@ -1224,9 +1254,6 @@
   </data>
   <data name="label6.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
-  </data>
-  <data name="&gt;&gt;tabControl.ZOrder" xml:space="preserve">
-    <value>0</value>
   </data>
   <data name="inspiredLink.TabIndex" type="System.Int32, mscorlib">
     <value>11</value>
@@ -1249,9 +1276,6 @@
   <data name="label9.TabIndex" type="System.Int32, mscorlib">
     <value>6</value>
   </data>
-  <data name="groupBox2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 171</value>
-  </data>
   <data name="branchesComboBox.Location" type="System.Drawing.Point, System.Drawing">
     <value>88, 66</value>
   </data>
@@ -1264,8 +1288,11 @@
   <data name="&gt;&gt;userTextBox.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
-  <data name="&gt;&gt;groupBox1.ZOrder" xml:space="preserve">
-    <value>4</value>
+  <data name="label10.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;label9.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="authCheckBox.Size" type="System.Drawing.Size, System.Drawing">
     <value>94, 17</value>
@@ -1279,29 +1306,32 @@
   <data name="authPanel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
   </data>
-  <data name="hostTextBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>47, 18</value>
+  <data name="tabControl.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="applyCfgButton.Text" xml:space="preserve">
+    <value>Apply</value>
   </data>
   <data name="&gt;&gt;groupBox1.Type" xml:space="preserve">
     <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="applyCfgButton.Text" xml:space="preserve">
-    <value>Apply changes</value>
+  <data name="&gt;&gt;label8.Name" xml:space="preserve">
+    <value>label8</value>
   </data>
   <data name="&gt;&gt;applyCfgButton.Name" xml:space="preserve">
     <value>applyCfgButton</value>
   </data>
-  <data name="tabControl.Location" type="System.Drawing.Point, System.Drawing">
-    <value>8, 8</value>
+  <data name="resetCfgBtn.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Left, Right</value>
   </data>
-  <data name="branchesComboBox.Text" xml:space="preserve">
-    <value>Stable</value>
+  <data name="&gt;&gt;removePatchButton.ZOrder" xml:space="preserve">
+    <value>1</value>
   </data>
   <data name="versionLabel.TabIndex" type="System.Int32, mscorlib">
     <value>12</value>
   </data>
-  <data name="&gt;&gt;removePatchButton.Name" xml:space="preserve">
-    <value>removePatchButton</value>
+  <data name="&gt;&gt;openLogsButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="tabControl.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -1321,17 +1351,17 @@
   <data name="tabPage2.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>3, 3, 3, 3</value>
   </data>
-  <data name="label2.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Right</value>
+  <data name="label11.Size" type="System.Drawing.Size, System.Drawing">
+    <value>79, 20</value>
   </data>
   <data name="&gt;&gt;label1.Type" xml:space="preserve">
     <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="label7.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Segoe UI, 9.75pt</value>
+  <data name="groupBox2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>409, 97</value>
   </data>
-  <data name="&gt;&gt;passwordTextBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;tabControl.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
