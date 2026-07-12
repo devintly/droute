@@ -101,14 +101,8 @@ namespace Droute.Installer.Forms
             string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             string path = Path.Combine(localAppData, "Temp", "droute.log");
 
-            try 
-            { 
-                Process.Start(path); 
-            }
-            catch (Exception ex) 
-            { 
-                Trace.WriteLine($"error during open log file: {ex.ToString()}"); 
-            }
+            try { Process.Start(path); }
+            catch (Exception ex) { Trace.WriteLine($"error during open log file: {ex.ToString()}"); }
         }
 
         private void installPatchButton_Click(object sender, EventArgs e)
@@ -137,18 +131,15 @@ namespace Droute.Installer.Forms
                 Settings.Default.AutoRestartPatch &&
                 DiscordManager.IsDiscordRunning(_selectedBranch);
 
-            if (Settings.Default.AutoRestartPatch)
-                DiscordManager.Close(_selectedBranch);
+            if (Settings.Default.AutoRestartPatch && !this.CloseDiscord(_selectedBranch))
+                return;
 
             using (var frm = new FrmPatch(action, _selectedBranch))
             {
-                frm.OnSuccess += () =>
-                {
-                    if (restartDiscord)
-                        this.LaunchDiscord(_selectedBranch);
-                };
-
                 frm.ShowDialog();
+
+                if (restartDiscord)
+                    this.LaunchDiscord(_selectedBranch);
             }
         }
 
@@ -174,8 +165,27 @@ namespace Droute.Installer.Forms
 
         private void RestartDiscord(DiscordManager.Branches branch)
         {
-            DiscordManager.Close(branch);
-            this.LaunchDiscord(branch);
+            if (this.CloseDiscord(branch))
+                this.LaunchDiscord(branch);
+        }
+
+        private bool CloseDiscord(DiscordManager.Branches branch)
+        {
+            try
+            {
+                if (DiscordTools.CloseAndWait(branch))
+                    return true;
+
+                MessageBox.Show("Discord did not exit in time. Close it manually and try again.",
+                    "Unable to close Discord", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine($"error during Discord shutdown: {ex}");
+                MessageBox.Show(ex.Message, "Unable to close Discord", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+
+            return false;
         }
 
         private void LaunchDiscord(DiscordManager.Branches branch)
