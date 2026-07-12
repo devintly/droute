@@ -40,6 +40,7 @@
             this.autoRestartPatchCheckbox = new System.Windows.Forms.CheckBox();
             this.autoRestartConfigCheckbox = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.resetCfgBtn = new System.Windows.Forms.Button();
             this.applyCfgButton = new System.Windows.Forms.Button();
             this.authPanel = new System.Windows.Forms.Panel();
             this.passwordTextBox = new System.Windows.Forms.TextBox();
@@ -159,6 +160,7 @@
             // groupBox1
             // 
             resources.ApplyResources(this.groupBox1, "groupBox1");
+            this.groupBox1.Controls.Add(this.resetCfgBtn);
             this.groupBox1.Controls.Add(this.applyCfgButton);
             this.groupBox1.Controls.Add(this.authPanel);
             this.groupBox1.Controls.Add(this.portNumeric);
@@ -168,6 +170,13 @@
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.TabStop = false;
+            // 
+            // resetCfgBtn
+            // 
+            resources.ApplyResources(this.resetCfgBtn, "resetCfgBtn");
+            this.resetCfgBtn.Name = "resetCfgBtn";
+            this.resetCfgBtn.UseVisualStyleBackColor = true;
+            this.resetCfgBtn.Click += new System.EventHandler(this.resetCfgBtn_Click);
             // 
             // applyCfgButton
             // 
@@ -400,5 +409,6 @@
         private System.Windows.Forms.Label versionLabel;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.ComboBox branchesComboBox;
+        private System.Windows.Forms.Button resetCfgBtn;
     }
 }
