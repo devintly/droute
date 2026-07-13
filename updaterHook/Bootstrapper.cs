@@ -3,6 +3,7 @@ using HarmonyLib;
 using System;
 using System.IO;
 using System.Reflection;
+using CoreDroute = Droute.Core.Droute;
 
 namespace Droute.UpdaterHook
 {
@@ -77,15 +78,11 @@ namespace Droute.UpdaterHook
             Logger.Trace($"ProcessStart triggered: exeName=\"{exeName}\", args=\"{arguments}\", wait={shouldWait}");
 
             string branchRoot = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            if (!IsTargetDiscordExecutable(branchRoot, exeName))
+            if (!CoreDroute.IsTargetExecutable(branchRoot, exeName))
             {
                 Logger.Debug($"skipping non-Discord process: {exeName}");
                 return true;
             }
-
-            // staged paths: .droute.[Guid].tmp
-            string proxyStagedPath = null;
-            string drouteStagedPath = null;
 
             try
             {
@@ -106,41 +103,14 @@ namespace Droute.UpdaterHook
 
                 Logger.Info($"target app directory: {appDirectory}");
 
-                string proxyPath = Path.Combine(appDirectory, PatchManager.MAIN_PROXY_DLL);
-                string droutePath = Path.Combine(appDirectory, "droute.dll");
-
-                // make staged paths
-                string stagingSuffix = $".droute.{Guid.NewGuid():N}.tmp";
-                proxyStagedPath = proxyPath + stagingSuffix;
-                drouteStagedPath = droutePath + stagingSuffix;
-
-                if (File.Exists(proxyPath) && File.Exists(droutePath)) 
+                if (CoreDroute.IsInstalled(appDirectory))
                 {
                     Logger.Info("patch already been applied, skip installation.");
                     return true;
                 }
 
-                Logger.Info($"duplicating {PatchManager.MAIN_PROXY_DLL} to: {proxyPath}");
-
-                // duplicate version.dll to version.{stagingSuffix}
-                PatchManager.DuplicateProxy(proxyStagedPath);
-
-                // apply patch for version.dll.{stagingSuffix}
-                Logger.Info("applying PE patch...");
-                PatchManager.ApplyPEPatch(proxyStagedPath);
-
-                // write main payload to droute.dll.{stagingSuffix}
-                Logger.Info("preparing droute.dll payload...");
-                File.WriteAllBytes(drouteStagedPath, Properties.Resources.Droute64);
-
-                // publish droute.dll (remove staging suffix)
-                Logger.Info("publishing prepared patch files...");
-                PatchManager.PublishStagedFile(drouteStagedPath, droutePath);
-                drouteStagedPath = null;
-
-                // publish version.dll
-                PatchManager.PublishStagedFile(proxyStagedPath, proxyPath);
-                proxyStagedPath = null;
+                Logger.Info("installing patch...");
+                CoreDroute.Install(appDirectory, Properties.Resources.Droute64);
 
                 Logger.Debug("patching completed successfully!");
             }
@@ -149,36 +119,8 @@ namespace Droute.UpdaterHook
                 Logger.Error($"unexpected exception in MyProcessStart: {ex.Message}");
                 Logger.Trace($"stack trace: {ex.StackTrace}");
             }
-            finally
-            {
-                PatchManager.DeleteStagedFile(proxyStagedPath);
-                PatchManager.DeleteStagedFile(drouteStagedPath);
-            }
 
             return true;
-        }
-
-        private static bool IsTargetDiscordExecutable(string branchRoot, string exeName)
-        {
-            if (string.IsNullOrEmpty(branchRoot) || string.IsNullOrWhiteSpace(exeName))
-                return false;
-
-            string branchName = Path.GetFileName(branchRoot.TrimEnd(
-                Path.DirectorySeparatorChar,
-                Path.AltDirectorySeparatorChar));
-
-            string expectedExecutable;
-            if (branchName.Equals("Discord", StringComparison.OrdinalIgnoreCase))
-                expectedExecutable = "Discord.exe";
-            else if (branchName.Equals("DiscordCanary", StringComparison.OrdinalIgnoreCase))
-                expectedExecutable = "DiscordCanary.exe";
-            else if (branchName.Equals("DiscordPTB", StringComparison.OrdinalIgnoreCase))
-                expectedExecutable = "DiscordPTB.exe";
-            else
-                return false;
-
-            string executableName = Path.GetFileName(exeName.Trim().Trim('"'));
-            return expectedExecutable.Equals(executableName, StringComparison.OrdinalIgnoreCase);
         }
     }
 }
