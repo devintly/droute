@@ -17,12 +17,35 @@ namespace droute {
 
             std::vector<SOCKET> pending;
             {
-                std::shared_lock<std::shared_mutex> lock(g_stateMutex);
+                std::unique_lock<std::shared_mutex> lock(g_stateMutex);
+                for (auto& entry : g_udpMap) {
+                    UdpAssociation& association = entry.second;
+                    if (association.status != UdpAssociation::Status::Associated ||
+                        !IsSocketDisconnected(association.ctrlSocket))
+                        continue;
+
+                    if (association.ctrlSocket != INVALID_SOCKET)
+                        Hooks::Real_closesocket(association.ctrlSocket);
+                    association.ctrlSocket = INVALID_SOCKET;
+                    association.relayAddr = {};
+                    association.status = UdpAssociation::Status::PendingAssociate;
+                    g_pendingUdp.insert(entry.first);
+                    LOG_WARN("udp %llu control connection lost, scheduling reassociation", (ULONG_PTR)entry.first);
+                }
                 pending.assign(g_pendingUdp.begin(), g_pendingUdp.end());
             }
 
             for (SOCKET s : pending) {
                 UdpAssociation temp;
+
+                {
+                    std::unique_lock<std::shared_mutex> lock(g_stateMutex);
+                    auto it = g_udpMap.find(s);
+                    if (it == g_udpMap.end() || it->second.status != UdpAssociation::Status::PendingAssociate)
+                        continue;
+                    it->second.status = UdpAssociation::Status::Associating;
+                }
+
                 bool ok = TryUdpAssociate(temp);
 
                 std::unique_lock<std::shared_mutex> lock(g_stateMutex);
@@ -41,6 +64,7 @@ namespace droute {
                     g_pendingUdp.erase(s);
                     LOG_INFO("udp %llu reassociated", (ULONG_PTR)s);
                 } else {
+                    it->second.status = UdpAssociation::Status::PendingAssociate;
                     LOG_TRACE("udp %llu retry failed", (ULONG_PTR)s);
                 }
             }

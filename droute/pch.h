@@ -13,8 +13,10 @@
 #include <cstring>
 
 #include <atomic>
+#include <algorithm>
 #include <deque>
 #include <map>
+#include <memory>
 #include <mutex>
 #include <set>
 #include <shared_mutex>
