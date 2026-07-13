@@ -102,6 +102,8 @@ namespace droute {
     void Logger::Write(LogLevel level, const char* file, int line, const char* fmt, ...) {
         if (level < g_logLevel.load(std::memory_order_relaxed)) return;
 
+        const int socketError = WSAGetLastError();
+
         const char* basename = file;
         const char* p = strrchr(file, '\\');
         if (p) basename = p + 1;
@@ -129,17 +131,21 @@ namespace droute {
             basename, line,
             msg);
 
-        std::lock_guard<std::mutex> lock(g_logMutex);
-        if (g_logFile != INVALID_HANDLE_VALUE) {
-            DWORD written;
-            if (bufLen > 0) {
-                DWORD length = static_cast<DWORD>(min(bufLen, static_cast<int>(sizeof(buf) - 1)));
-                if (!WriteFile(g_logFile, buf, length, &written, NULL) || written != length)
-                    OutputDebugStringA(buf);
+        {
+            std::lock_guard<std::mutex> lock(g_logMutex);
+            if (g_logFile != INVALID_HANDLE_VALUE) {
+                DWORD written;
+                if (bufLen > 0) {
+                    DWORD length = static_cast<DWORD>(min(bufLen, static_cast<int>(sizeof(buf) - 1)));
+                    if (!WriteFile(g_logFile, buf, length, &written, NULL) || written != length)
+                        OutputDebugStringA(buf);
+                }
+            } else {
+                OutputDebugStringA(buf);
             }
-        } else {
-            OutputDebugStringA(buf);
         }
+
+        WSASetLastError(socketError);
     }
 
 }
