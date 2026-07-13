@@ -8,17 +8,16 @@
 
 namespace droute {
 
-    int ConnectToProxy(SOCKET s) {
+    int ConnectToProxy(SOCKET s, uint64_t deadline) {
         int rc = Hooks::Real_connect(s, reinterpret_cast<const sockaddr*>(&g_proxyAddr), sizeof(g_proxyAddr));
         if (rc == 0)
             return 0;
 
         int err = WSAGetLastError();
-        if (err != WSAEWOULDBLOCK)
+        if (err != WSAEWOULDBLOCK && err != WSAEINPROGRESS)
             return SOCKET_ERROR;
 
-        if (!WaitForWrite(s, static_cast<int>(g_cfg.connectTimeout))) {
-            WSASetLastError(WSAETIMEDOUT);
+        if (!WaitForConnect(s, RemainingTimeout(deadline))) {
             return SOCKET_ERROR;
         }
 
@@ -34,23 +33,21 @@ namespace droute {
         return 0;
     }
 
-    int Socks5ProxyConnect(SOCKET s, const sockaddr_in& target) {
-        if (!Socks5Handshake(s, g_cfg.user.c_str(), g_cfg.password.c_str())) {
-            WSASetLastError(WSAECONNRESET);
+    int Socks5ProxyConnect(SOCKET s, const sockaddr_in& target, uint64_t deadline) {
+        if (!Socks5Handshake(s, g_cfg.user.c_str(), g_cfg.password.c_str(), deadline)) {
             return SOCKET_ERROR;
         }
-        if (!Socks5RequestConnect(s, target)) {
-            WSASetLastError(WSAECONNRESET);
+        if (!Socks5RequestConnect(s, target, deadline)) {
             return SOCKET_ERROR;
         }
         return 0;
     }
 
-    int ConnectViaProxy(SOCKET s, const sockaddr_in* target) {
-        if (ConnectToProxy(s) != 0) {
+    int ConnectViaProxy(SOCKET s, const sockaddr_in* target, uint64_t deadline) {
+        if (ConnectToProxy(s, deadline) != 0) {
             return SOCKET_ERROR;
         }
-        if (Socks5ProxyConnect(s, *target) != 0) {
+        if (Socks5ProxyConnect(s, *target, deadline) != 0) {
             return SOCKET_ERROR;
         }
         return 0;
@@ -85,12 +82,32 @@ namespace droute {
 
         const std::string target = AddrToString(*addr);
         const uint64_t startedAt = GetTickCount64();
+        const uint64_t deadline = MakeDeadline(g_cfg.connectTimeout);
 
-        int result = ConnectViaProxy(s, addr);
+        bool changedToNonBlocking = false;
+        if (!wasNonBlocking) {
+            u_long mode = 1;
+            if (Hooks::Real_ioctlsocket(s, FIONBIO, &mode) != 0)
+                return SOCKET_ERROR;
+            changedToNonBlocking = true;
+        }
+
+        int result = ConnectViaProxy(s, addr, deadline);
+        int resultError = result == 0 ? 0 : WSAGetLastError();
+
+        if (changedToNonBlocking) {
+            u_long mode = 0;
+            if (Hooks::Real_ioctlsocket(s, FIONBIO, &mode) != 0 && result == 0) {
+                result = SOCKET_ERROR;
+                resultError = WSAGetLastError();
+            }
+        }
+
         if (result != 0) {
-            int err = WSAGetLastError();
+            WSASetLastError(resultError);
             LOG_WARN("connect -> %s failed: wsa_error=%d elapsed_ms=%llu",
-                     target.c_str(), err, GetTickCount64() - startedAt);
+                     target.c_str(), resultError, GetTickCount64() - startedAt);
+            WSASetLastError(resultError);
             return SOCKET_ERROR;
         }
 
