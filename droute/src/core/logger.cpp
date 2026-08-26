@@ -19,11 +19,17 @@ namespace droute {
             case LogLevel::Info:  return "INFO";
             case LogLevel::Warn:  return "WARN";
             case LogLevel::Error: return "ERROR";
+            case LogLevel::Off:   return "OFF";
         }
         return "?????";
     }
 
     bool Logger::Init() {
+        if (g_logLevel.load(std::memory_order_relaxed) == LogLevel::Off)
+            return true;
+        if (g_logFile != INVALID_HANDLE_VALUE)
+            return true;
+
         char path[MAX_PATH];
         DWORD len = GetTempPathA(MAX_PATH, path);
         if (len == 0 || len >= MAX_PATH) {
@@ -100,7 +106,9 @@ namespace droute {
     }
 
     void Logger::Write(LogLevel level, const char* file, int line, const char* fmt, ...) {
-        if (level < g_logLevel.load(std::memory_order_relaxed)) return;
+        const LogLevel current = g_logLevel.load(std::memory_order_relaxed);
+        if (current == LogLevel::Off || level == LogLevel::Off || level < current)
+            return;
 
         const int socketError = WSAGetLastError();
 

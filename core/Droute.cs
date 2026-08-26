@@ -8,6 +8,7 @@ namespace Droute.Core
         public const string UPDATER_HOOK_DLL = "Droute.UpdaterHook.dll";
         public const string UPDATER_CONFIG = "Update.exe.config";
         public const string UPDATER_EXE = "Update.exe";
+        public const string CONFIG_INI = "droute.ini";
 
         public static string GetProxyPath(string appDirectory)
             => Path.Combine(appDirectory, PatchManager.MAIN_PROXY_DLL);
@@ -23,6 +24,39 @@ namespace Droute.Core
 
         public static string GetUpdaterConfigPath(string branchRoot)
             => Path.Combine(branchRoot, UPDATER_CONFIG);
+
+        public static string GetConfigIniPath(string appDirectory)
+            => Path.Combine(appDirectory, CONFIG_INI);
+
+        public static string ResolveInstallDirectory(DiscordManager.Branches branch, string customPath = null, bool createIfMissing = false)
+        {
+            if (!string.IsNullOrWhiteSpace(customPath))
+            {
+                string path = Path.GetFullPath(customPath.Trim().Trim('"'));
+                if (File.Exists(path) && !Directory.Exists(path))
+                    throw new IOException("The specified path is a file, not a directory.");
+
+                if (!Directory.Exists(path))
+                {
+                    if (!createIfMissing)
+                        throw new DirectoryNotFoundException("Install directory not found.");
+
+                    Directory.CreateDirectory(path);
+                }
+
+                return path;
+            }
+
+            string branchRoot = DiscordManager.GetBranchRoot(branch);
+            if (string.IsNullOrEmpty(branchRoot) || !Directory.Exists(branchRoot))
+                throw new DirectoryNotFoundException("Branch Root directory not found.");
+
+            string appDirectory = DiscordManager.GetLastVersionPath(branchRoot);
+            if (string.IsNullOrEmpty(appDirectory) || !Directory.Exists(appDirectory))
+                throw new DirectoryNotFoundException("App directory not found.");
+
+            return appDirectory;
+        }
 
         public static bool IsInstalled(string appDirectory)
         {
@@ -84,6 +118,7 @@ namespace Droute.Core
 
             PatchManager.DeleteFile(GetProxyPath(appDirectory));
             PatchManager.DeleteFile(GetPayloadPath(appDirectory));
+            PatchManager.DeleteFile(GetConfigIniPath(appDirectory));
         }
 
         public static void InstallUpdaterHook(string branchRoot, byte[] updaterHook, string updaterConfig)
@@ -151,69 +186,101 @@ namespace Droute.Core
             PatchManager.DeleteFile(GetUpdaterConfigPath(branchRoot));
         }
 
-        public static void Install(DiscordManager.Branches branch, byte[] payload, byte[] updaterHook, string updaterConfig)
+        public static void Install(DiscordManager.Branches branch, byte[] payload, byte[] updaterHook, string updaterConfig, string customPath = null, bool portable = false)
         {
-            string branchRoot = DiscordManager.GetBranchRoot(branch);
-            if (string.IsNullOrEmpty(branchRoot) || !Directory.Exists(branchRoot))
-                throw new DirectoryNotFoundException("Branch root directory not found.");
-
-            string appDirectory = DiscordManager.GetLastVersionPath(branchRoot);
-            if (string.IsNullOrEmpty(appDirectory) || !Directory.Exists(appDirectory))
-                throw new DirectoryNotFoundException("App directory not found.");
-
-            string updaterPath = GetUpdaterPath(branchRoot);
-            if (!File.Exists(updaterPath))
-                throw new FileNotFoundException("Update.exe not found.", updaterPath);
-
-            PatchManager.WaitForFilesAvailable(new[]
+            string branchRoot = null;
+            if (!portable)
             {
-                GetProxyPath(appDirectory),
-                GetPayloadPath(appDirectory),
-                GetUpdaterHookPath(branchRoot),
-                GetUpdaterConfigPath(branchRoot)
-            }, 5000);
+                branchRoot = DiscordManager.GetBranchRoot(branch);
+                if (string.IsNullOrEmpty(branchRoot) || !Directory.Exists(branchRoot))
+                    throw new DirectoryNotFoundException("Branch root directory not found.");
+
+                string updaterPath = GetUpdaterPath(branchRoot);
+                if (!File.Exists(updaterPath))
+                    throw new FileNotFoundException("Update.exe not found.", updaterPath);
+            }
+
+            string appDirectory = ResolveInstallDirectory(branch, customPath, createIfMissing: true);
+
+            PatchManager.WaitForFilesAvailable(portable
+                ? new[]
+                {
+                    GetProxyPath(appDirectory),
+                    GetPayloadPath(appDirectory)
+                }
+                : new[]
+                {
+                    GetProxyPath(appDirectory),
+                    GetPayloadPath(appDirectory),
+                    GetUpdaterHookPath(branchRoot),
+                    GetUpdaterConfigPath(branchRoot)
+                }, 5000);
 
             Install(appDirectory, payload);
-            InstallUpdaterHook(branchRoot, updaterHook, updaterConfig);
+
+            if (!portable)
+                InstallUpdaterHook(branchRoot, updaterHook, updaterConfig);
         }
 
-        public static void Install(DiscordManager.Branches branch, string payloadPath, string updaterHookPath, string updaterConfigPath)
+        public static void Install(DiscordManager.Branches branch, string payloadPath, string updaterHookPath, string updaterConfigPath, string customPath = null, bool portable = false)
         {
             if (string.IsNullOrEmpty(payloadPath))
                 throw new ArgumentException("Payload path is required.", nameof(payloadPath));
 
-            if (string.IsNullOrEmpty(updaterHookPath))
-                throw new ArgumentException("Updater hook path is required.", nameof(updaterHookPath));
+            if (!portable)
+            {
+                if (string.IsNullOrEmpty(updaterHookPath))
+                    throw new ArgumentException("Updater hook path is required.", nameof(updaterHookPath));
 
-            if (string.IsNullOrEmpty(updaterConfigPath))
-                throw new ArgumentException("Updater config path is required.", nameof(updaterConfigPath));
+                if (string.IsNullOrEmpty(updaterConfigPath))
+                    throw new ArgumentException("Updater config path is required.", nameof(updaterConfigPath));
+
+                if (!File.Exists(updaterHookPath))
+                    throw new FileNotFoundException("Updater hook file not found.", updaterHookPath);
+
+                if (!File.Exists(updaterConfigPath))
+                    throw new FileNotFoundException("Updater config file not found.", updaterConfigPath);
+            }
 
             if (!File.Exists(payloadPath))
                 throw new FileNotFoundException("Payload file not found.", payloadPath);
 
-            if (!File.Exists(updaterHookPath))
-                throw new FileNotFoundException("Updater hook file not found.", updaterHookPath);
-
-            if (!File.Exists(updaterConfigPath))
-                throw new FileNotFoundException("Updater config file not found.", updaterConfigPath);
-
             Install(
                 branch,
                 File.ReadAllBytes(payloadPath),
-                File.ReadAllBytes(updaterHookPath),
-                File.ReadAllText(updaterConfigPath));
+                portable ? null : File.ReadAllBytes(updaterHookPath),
+                portable ? null : File.ReadAllText(updaterConfigPath),
+                customPath,
+                portable);
         }
 
-        public static void Remove(DiscordManager.Branches branch)
+        public static void Remove(DiscordManager.Branches branch, string customPath = null, bool portable = false)
         {
-            string branchRoot = DiscordManager.GetBranchRoot(branch);
+            if (!portable)
+            {
+                string branchRoot = DiscordManager.GetBranchRoot(branch);
 
-            if (string.IsNullOrEmpty(branchRoot) || !Directory.Exists(branchRoot))
-                return;
+                if (!string.IsNullOrEmpty(branchRoot) && Directory.Exists(branchRoot))
+                    RemoveUpdaterHook(branchRoot);
+            }
 
-            RemoveUpdaterHook(branchRoot);
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(customPath))
+                {
+                    string path = Path.GetFullPath(customPath.Trim().Trim('"'));
+                    if (Directory.Exists(path))
+                        Remove(path);
+                    return;
+                }
 
-            try { Remove(DiscordManager.GetLastVersionPath(branchRoot)); }
+                string branchRoot = DiscordManager.GetBranchRoot(branch);
+                if (string.IsNullOrEmpty(branchRoot) || !Directory.Exists(branchRoot))
+                    return;
+
+                try { Remove(DiscordManager.GetLastVersionPath(branchRoot)); }
+                catch { }
+            }
             catch { }
         }
 

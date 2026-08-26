@@ -8,6 +8,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
+using DrCore = Droute.Core.Droute;
 
 namespace Droute.Installer
 {
@@ -96,7 +97,7 @@ namespace Droute.Installer
             {
                 try
                 {
-                    bool configChanged = ApplyOptionalConfig(opts);
+                    bool configChanged = ApplyOptionalConfig(opts, branch);
 
                     if (!opts.Install && !opts.Uninstall)
                     {
@@ -114,8 +115,8 @@ namespace Droute.Installer
                     }
 
                     bool success = opts.Install
-                        ? PatchTools.Install(branch)
-                        : PatchTools.Remove(branch);
+                        ? PatchTools.Install(branch, opts.InstallPath, opts.Portable)
+                        : PatchTools.Remove(branch, opts.InstallPath, opts.Portable);
 
                     Environment.ExitCode = success ? 0 : 1;
                 }
@@ -152,42 +153,49 @@ namespace Droute.Installer
             return normalized;
         }
 
-        private static bool ApplyOptionalConfig(ArgumentOptions opts)
+        private static bool ApplyOptionalConfig(ArgumentOptions opts, DiscordManager.Branches branch)
         {
-            bool changed = false;
-            var config = new Config();
-
-            if (opts.Host != null)
-            {
-                config.Host = opts.Host;
-                changed = true;
-            }
-
-            if (opts.Port.HasValue)
-            {
-                config.Port = opts.Port.Value;
-                changed = true;
-            }
-
-            if (opts.User != null)
-            {
-                config.User = opts.User;
-                changed = true;
-            }
-
-            if (opts.Password != null)
-            {
-                config.Password = opts.Password;
-                changed = true;
-            }
-
-            if (!changed)
+            if (opts.Portable && opts.Uninstall)
                 return false;
 
-            config.Apply();
+            bool changed = opts.Host != null || opts.Port.HasValue || opts.User != null || opts.Password != null;
+            if (!opts.Portable)
+            {
+                if (!changed)
+                    return false;
 
-            CliLogger.WriteOk("Proxy configuration updated.");
+                var config = new Config();
+                ApplyProxyOptions(opts, config);
+                config.Apply();
+                CliLogger.WriteOk("Proxy configuration updated.");
+                return true;
+            }
+
+            if (!changed && !opts.Install)
+                return false;
+
+            bool createDirectory = opts.Install || !string.IsNullOrWhiteSpace(opts.InstallPath);
+            string directory = DrCore.ResolveInstallDirectory(branch, opts.InstallPath, createIfMissing: createDirectory);
+            var portableConfig = new Config(DrCore.GetConfigIniPath(directory));
+            ApplyProxyOptions(opts, portableConfig);
+            portableConfig.Apply();
+            CliLogger.WriteOk($"Portable configuration written to {portableConfig.IniPath}.");
             return true;
+        }
+
+        private static void ApplyProxyOptions(ArgumentOptions opts, Config config)
+        {
+            if (opts.Host != null)
+                config.Host = opts.Host;
+
+            if (opts.Port.HasValue)
+                config.Port = opts.Port.Value;
+
+            if (opts.User != null)
+                config.User = opts.User;
+
+            if (opts.Password != null)
+                config.Password = opts.Password;
         }
     }
 }
