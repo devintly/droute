@@ -24,5 +24,11 @@ namespace Droute.Installer.Classes
 
         [Option("password", Required = false, HelpText = "Proxy password.")]
         public string Password { get; set; }
+
+        [Option("path", Required = false, HelpText = "Custom directory to place version.dll and droute.dll.")]
+        public string InstallPath { get; set; }
+
+        [Option("portable", Required = false, HelpText = "Skip Update.exe patching and store settings in droute.ini next to droute.dll instead of the registry.")]
+        public bool Portable { get; set; }
     }
 }

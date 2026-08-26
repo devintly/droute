@@ -57,6 +57,10 @@ To install via the command line, run the following command:
 ```bash
 .\droute.exe -i --branch stable --host 127.0.0.1 --port 1080
 ```
+Place `version.dll` and `droute.dll` into a custom directory, skip `Update.exe` patching, and store settings in `droute.ini`:
+```bash
+.\droute.exe -i --portable --path "C:\Discord\app-1.0.0" --host 127.0.0.1 --port 1080
+```
 If you need help or want to see all available options, run:
 ```bash
 .\droute.exe --help
@@ -84,5 +88,5 @@ When Discord updates, it creates a folder with the new version number. Droute ho
 - This library hooks the process creation function. As soon as Squirrel Updater creates the new version directory, the hook patches it before the new Discord client even launches.
 
 ### Settings & Logs
-- **Configuration:** All settings are stored in the Windows Registry at `HKCU/Software/droute` and can be tweaked via `regedit`.
-- **Logs:** The main module writes logs to `%Temp%\droute.log`, while the updater logs are saved to `droute.log` in the Discord root folder.
+- **Configuration:** Settings are read from `droute.ini` next to `droute.dll` when that file exists. Otherwise they come from the Windows Registry at `HKCU/Software/droute` and can be tweaked via `regedit`.
+- **Logs:** The main module writes logs to `%Temp%\droute.log`, while the updater logs are saved to `droute.log` in the Discord root folder. Set `LogLevel` to `5` to disable logging completely.

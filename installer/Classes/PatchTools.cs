@@ -10,7 +10,7 @@ namespace Droute.Installer.Classes
         public static event Action<string> OnLog;
         public static event Action<int> OnProgressChanged;
 
-        public static bool Install(DiscordManager.Branches branch)
+        public static bool Install(DiscordManager.Branches branch, string customPath = null, bool portable = false)
         {
             try
             {
@@ -19,25 +19,38 @@ namespace Droute.Installer.Classes
 
                 OnLog?.Invoke("[ STAGE ] Initializing and verifying paths...");
 
-                string branchRoot = DiscordManager.GetBranchRoot(branch);
-                if (string.IsNullOrEmpty(branchRoot) || !Directory.Exists(branchRoot))
-                    throw new DirectoryNotFoundException("Branch Root directory not found");
+                string appDirectory = DrCore.ResolveInstallDirectory(branch, customPath, createIfMissing: true);
+                if (!string.IsNullOrWhiteSpace(customPath))
+                    OnLog?.Invoke($"[ INFO ] Using custom payload path: {appDirectory}");
 
-                string appDirectory = DiscordManager.GetLastVersionPath(branchRoot);
-                if (string.IsNullOrEmpty(appDirectory) || !Directory.Exists(appDirectory))
-                    throw new DirectoryNotFoundException("App directory not found");
+                if (portable)
+                    OnLog?.Invoke("[ INFO ] Portable mode: skipping Update.exe patching.");
 
-                string updaterPath = DrCore.GetUpdaterPath(branchRoot);
-                if (string.IsNullOrEmpty(updaterPath) || !File.Exists(updaterPath))
-                    throw new FileNotFoundException("Update.exe not found");
-
-                PatchManager.WaitForFilesAvailable(new[]
+                string branchRoot = null;
+                if (!portable)
                 {
-                    DrCore.GetProxyPath(appDirectory),
-                    DrCore.GetPayloadPath(appDirectory),
-                    DrCore.GetUpdaterHookPath(branchRoot),
-                    DrCore.GetUpdaterConfigPath(branchRoot)
-                }, 5000);
+                    branchRoot = DiscordManager.GetBranchRoot(branch);
+                    if (string.IsNullOrEmpty(branchRoot) || !Directory.Exists(branchRoot))
+                        throw new DirectoryNotFoundException("Branch Root directory not found");
+
+                    string updaterPath = DrCore.GetUpdaterPath(branchRoot);
+                    if (string.IsNullOrEmpty(updaterPath) || !File.Exists(updaterPath))
+                        throw new FileNotFoundException("Update.exe not found");
+                }
+
+                PatchManager.WaitForFilesAvailable(portable
+                    ? new[]
+                    {
+                        DrCore.GetProxyPath(appDirectory),
+                        DrCore.GetPayloadPath(appDirectory)
+                    }
+                    : new[]
+                    {
+                        DrCore.GetProxyPath(appDirectory),
+                        DrCore.GetPayloadPath(appDirectory),
+                        DrCore.GetUpdaterHookPath(branchRoot),
+                        DrCore.GetUpdaterConfigPath(branchRoot)
+                    }, 5000);
 
                 OnLog?.Invoke("[ OK ] All target environment paths verified successfully!");
                 OnProgressChanged?.Invoke(15);
@@ -53,16 +66,19 @@ namespace Droute.Installer.Classes
 
                 OnLog?.Invoke($"[ > ] Preparing payload: {PatchManager.MAIN_PAYLOAD_DLL}...");
                 DrCore.Install(appDirectory, Properties.Resources.Droute64);
-                OnProgressChanged?.Invoke(60);
+                OnProgressChanged?.Invoke(portable ? 90 : 60);
 
-                OnLog?.Invoke("[ STAGE ] Configuring Squirrel Update hooks...");
+                if (!portable)
+                {
+                    OnLog?.Invoke("[ STAGE ] Configuring Squirrel Update hooks...");
 
-                OnLog?.Invoke($"[ > ] Preparing configuration: {DrCore.UPDATER_CONFIG}...");
-                OnProgressChanged?.Invoke(75);
+                    OnLog?.Invoke($"[ > ] Preparing configuration: {DrCore.UPDATER_CONFIG}...");
+                    OnProgressChanged?.Invoke(75);
 
-                OnLog?.Invoke($"[ > ] Preparing UpdaterHook: {DrCore.UPDATER_HOOK_DLL}...");
-                DrCore.InstallUpdaterHook(branchRoot, Properties.Resources.UpdaterHook, Properties.Resources.UpdaterConfig);
-                OnProgressChanged?.Invoke(90);
+                    OnLog?.Invoke($"[ > ] Preparing UpdaterHook: {DrCore.UPDATER_HOOK_DLL}...");
+                    DrCore.InstallUpdaterHook(branchRoot, Properties.Resources.UpdaterHook, Properties.Resources.UpdaterConfig);
+                    OnProgressChanged?.Invoke(90);
+                }
 
                 OnLog?.Invoke("[ STATUS ] Installation successfully completed!");
                 OnProgressChanged?.Invoke(100);
@@ -77,36 +93,62 @@ namespace Droute.Installer.Classes
             }
         }
 
-        public static bool Remove(DiscordManager.Branches branch)
+        public static bool Remove(DiscordManager.Branches branch, string customPath = null, bool portable = false)
         {
             try
             {
                 OnLog?.Invoke($"[ STATUS ] Removal started for Discord {branch.ToString()}...");
                 OnProgressChanged?.Invoke(0);
 
-                string branchRoot = DiscordManager.GetBranchRoot(branch);
-                if (string.IsNullOrEmpty(branchRoot) || !Directory.Exists(branchRoot))
+                if (!portable)
                 {
-                    OnLog?.Invoke("[ WARN ] Branch root directory not found. Nothing to remove.");
-                    OnProgressChanged?.Invoke(100);
-                    return true;
+                    string branchRoot = DiscordManager.GetBranchRoot(branch);
+                    if (string.IsNullOrEmpty(branchRoot) || !Directory.Exists(branchRoot))
+                    {
+                        if (string.IsNullOrWhiteSpace(customPath))
+                        {
+                            OnLog?.Invoke("[ WARN ] Branch root directory not found. Nothing to remove.");
+                            OnProgressChanged?.Invoke(100);
+                            return true;
+                        }
+                    }
+                    else
+                    {
+                        OnLog?.Invoke("[ STAGE ] Cleaning up Squirrel Update hooks...");
+
+                        if (File.Exists(DrCore.GetUpdaterHookPath(branchRoot)))
+                            OnLog?.Invoke($"[ < ] Removing: {DrCore.UPDATER_HOOK_DLL}...");
+                        OnProgressChanged?.Invoke(30);
+
+                        if (File.Exists(DrCore.GetUpdaterConfigPath(branchRoot)))
+                            OnLog?.Invoke($"[ < ] Removing: {DrCore.UPDATER_CONFIG}...");
+
+                        DrCore.RemoveUpdaterHook(branchRoot);
+                        OnProgressChanged?.Invoke(50);
+                    }
                 }
-
-                OnLog?.Invoke("[ STAGE ] Cleaning up Squirrel Update hooks...");
-
-                if (File.Exists(DrCore.GetUpdaterHookPath(branchRoot)))
-                    OnLog?.Invoke($"[ < ] Removing: {DrCore.UPDATER_HOOK_DLL}...");
-                OnProgressChanged?.Invoke(30);
-
-                if (File.Exists(DrCore.GetUpdaterConfigPath(branchRoot)))
-                    OnLog?.Invoke($"[ < ] Removing: {DrCore.UPDATER_CONFIG}...");
-
-                DrCore.RemoveUpdaterHook(branchRoot);
-                OnProgressChanged?.Invoke(50);
+                else
+                {
+                    OnLog?.Invoke("[ INFO ] Portable mode: skipping Update.exe hook cleanup.");
+                    OnProgressChanged?.Invoke(50);
+                }
 
                 try
                 {
-                    string appDirectory = DiscordManager.GetLastVersionPath(branchRoot);
+                    string appDirectory = null;
+
+                    if (!string.IsNullOrWhiteSpace(customPath))
+                    {
+                        string path = Path.GetFullPath(customPath.Trim().Trim('"'));
+                        if (Directory.Exists(path))
+                            appDirectory = path;
+                    }
+                    else
+                    {
+                        string branchRoot = DiscordManager.GetBranchRoot(branch);
+                        if (!string.IsNullOrEmpty(branchRoot) && Directory.Exists(branchRoot))
+                            appDirectory = DiscordManager.GetLastVersionPath(branchRoot);
+                    }
 
                     if (!string.IsNullOrEmpty(appDirectory) && Directory.Exists(appDirectory))
                     {
@@ -118,6 +160,9 @@ namespace Droute.Installer.Classes
 
                         if (File.Exists(DrCore.GetPayloadPath(appDirectory)))
                             OnLog?.Invoke($"[ < ] Deleting payload: {PatchManager.MAIN_PAYLOAD_DLL}...");
+
+                        if (File.Exists(DrCore.GetConfigIniPath(appDirectory)))
+                            OnLog?.Invoke($"[ < ] Deleting configuration: {DrCore.CONFIG_INI}...");
 
                         DrCore.Remove(appDirectory);
                     }

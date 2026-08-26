@@ -9,7 +9,8 @@ namespace droute {
         Debug = 1,
         Info  = 2,
         Warn  = 3,
-        Error = 4
+        Error = 4,
+        Off   = 5
     };
 
     const char* LevelToString(LogLevel level);

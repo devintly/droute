@@ -87,9 +87,10 @@ namespace droute {
             return;
         }
 
-        Logger::Init();
         g_cfg.Load();
         Logger::SetLevel(g_cfg.logLevel);
+        if (g_cfg.logLevel != LogLevel::Off)
+            Logger::Init();
 
         char exePath[MAX_PATH];
         GetModuleFileNameA(NULL, exePath, MAX_PATH);
