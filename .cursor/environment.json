@@ -1,0 +1,4 @@
+{
+  "name": "droute (Mono / MSBuild)",
+  "install": "bash ./.cursor/install.sh"
+}
